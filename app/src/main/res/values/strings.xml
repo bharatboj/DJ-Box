@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">FinalProject</string>
+    <string name="app_name">TechDemonstration</string>
+    <string name="disk_jockey">Disc Jockey</string>
+    <string name="audience">Audience</string>
+    <string name="sign_in_as">Sign in as:</string>
+    <string name="log_in_with_facebook">Log in with Facebook</string>
+    <string name="username_or_email">Username or email</string>
+    <string name="password">Password</string>
+    <string name="log_in">Log in</string>
+    <string name="forgot_your_password">Forgot your password?</string>
+    <string name="or">or</string>
+    <string name="welcome_to_the_dj_user_interface">Welcome to the DJ user interface</string>
+    <string name="welcome_text">Hello!</string>
+    <string name="welcome_to_the_audience_user_interface">Welcome to the Audience User Interface</string>
+    <string name="spotify_login">Spotify Login</string>
+    <string name="log_out">Log Out</string>
 </resources>

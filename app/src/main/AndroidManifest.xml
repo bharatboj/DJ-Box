@@ -13,7 +13,7 @@
         android:fullBackupContent="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SelectPlaylistActivity"
+            android:name=".MainSignInActivity"
             android:configChanges="keyboardHidden|keyboard|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -32,7 +32,7 @@
             android:name=".CreateRoomActivity"
             android:label="Create Room"></activity>
         <activity
-            android:name=".MainSignInActivity"
+            android:name=".SelectPlaylistActivity"
             android:label="Select Playlist"></activity>
     </application>
 

@@ -15,13 +15,6 @@
         android:dividerHeight=".5dp">
     </ListView>
 
-    <iframe
-        android:src="https://open.spotify.com/embed?uri=spotify%3Aalbum%3A2rp5riHULWgrXPsDtsp1ir"
-        android:width="300"
-        android:height="380"
-        android:frameborder="0"
-        android:allowtransparency="true"></iframe>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

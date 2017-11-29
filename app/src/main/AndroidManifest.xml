@@ -33,7 +33,8 @@
             android:label="Create Room"></activity>
         <activity
             android:name=".SelectPlaylistActivity"
-            android:label="Select Playlist"></activity>
+            android:label="Select Playlist">
+        </activity>
     </application>
 
 </manifest>

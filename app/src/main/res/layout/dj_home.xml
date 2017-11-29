@@ -5,32 +5,36 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:padding="25dp"
     android:background="@color/colorPrimaryDark">
 
-    <TextView
-        android:id="@+id/hello_user"
-        android:layout_width="wrap_content"
+    <ListView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_text"
-        android:textSize="20sp"
-        android:textColor="@color/colorAccent"
-        android:layout_margin="30dp" />
+        android:divider="#000000"
+        android:dividerHeight=".5dp">
+    </ListView>
 
-    <TextView
-        android:id="@+id/welcome_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/welcome_to_the_dj_user_interface"
-        android:textSize="20sp"
-        android:textColor="@color/colorAccent"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp" />
+    <iframe
+        android:src="https://open.spotify.com/embed?uri=spotify%3Aalbum%3A2rp5riHULWgrXPsDtsp1ir"
+        android:width="300"
+        android:height="380"
+        android:frameborder="0"
+        android:allowtransparency="true"></iframe>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20sp"
-        android:onClick="onLogOutButtonClicked"
-        android:text="@string/log_out"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom">
+
+        <Button
+            android:id="@+id/b_choose_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:onClick="onLogOutButtonClicked"
+            android:text="@string/log_out" />
+    </RelativeLayout>
 
 </LinearLayout>

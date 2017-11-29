@@ -18,7 +18,7 @@ import static edu.illinois.finalproject.ActivityUtils.openActivity;
  * https://github.com/spotify/android-auth/blob/master/auth-sample/src/main/java/com/spotify/sdk
  *      /android/authentication/sample/MainActivity.java
  */
-public class DJorAudienceSignInActivity extends AppCompatActivity {
+public class MainSignInActivity extends AppCompatActivity {
 
     // Request code will be used to verify if result comes from the login activity. Can be set to any integer.
     public static final String CLIENT_ID = "089d841ccc194c10a77afad9e1c11d54";
@@ -32,7 +32,7 @@ public class DJorAudienceSignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dj_or_audience_screen);
+        setContentView(R.layout.main_sign_in);
     }
 
     /**
@@ -86,7 +86,7 @@ public class DJorAudienceSignInActivity extends AppCompatActivity {
     private AuthenticationRequest getAuthenticationRequest(final AuthenticationResponse.Type type) {
         return new AuthenticationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(false)
-                .setScopes(new String[]{"user-read-email"})
+                .setScopes(new String[]{"playlist-read-private"})
                 .setCampaign("your-campaign-token")
                 .build();
     }

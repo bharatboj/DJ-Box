@@ -27,7 +27,7 @@ public class DJHomeActivity extends AppCompatActivity {
      * @param view      View object that has actions performed when clicked on
      */
     public void onLogOutButtonClicked(final View view) {
-        openActivity(this, DJorAudienceSignInActivity.class);
+        openActivity(this, MainSignInActivity.class);
 
         // Code from: https://stackoverflow.com/questions/28998241/how-to-clear-cookies
         //      -and-cache-of-webview-on-android-when-not-in-webview

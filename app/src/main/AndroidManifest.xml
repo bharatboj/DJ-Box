@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.illinois.techdemonstration">
+    package="edu.illinois.finalproject">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <application
+    <activity
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,7 +13,7 @@
         android:fullBackupContent="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".DJorAudienceSignInActivity"
+            android:name=".MainSignInActivity"
             android:configChanges="keyboardHidden|keyboard|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -27,8 +27,12 @@
             android:label="Audience Home"></activity>
         <activity
             android:name=".DJHomeActivity"
-            android:label="DJ Home">
-        </activity>
+            android:label="DJ Home"></activity>
+        <activity
+            android:name=".CreateRoomActivity"
+            android:label="Create Room"></activity>
+        <activity android:name=".SelectPlaylistActivity"
+            android:label="Select Playlist"></activity>
     </application>
 
 </manifest>

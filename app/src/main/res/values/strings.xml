@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TechDemonstration</string>
+    <string name="app_name">Final Project</string>
     <string name="disk_jockey">Disc Jockey</string>
     <string name="audience">Audience</string>
     <string name="sign_in_as">Sign in as:</string>
@@ -14,4 +14,5 @@
     <string name="welcome_to_the_audience_user_interface">Welcome to the Audience User Interface</string>
     <string name="spotify_login">Spotify Login</string>
     <string name="log_out">Log Out</string>
+    <string name="name">Name:</string>
 </resources>

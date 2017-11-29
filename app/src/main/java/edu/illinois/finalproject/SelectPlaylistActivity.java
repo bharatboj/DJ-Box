@@ -1,8 +1,18 @@
 package edu.illinois.finalproject;
 
-/**
- * Created by Bharat Bojja on 11/29/2017.
- */
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-public class SelectPlaylistActivity {
+public class SelectPlaylistActivity extends AppCompatActivity {
+
+    /**
+     * This function sets up the activity
+     *
+     * @param savedInstanceState    a Bundle object containing the activity's previously saved state
+     */
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.select_playlist);
+    }
 }

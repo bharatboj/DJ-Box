@@ -20,5 +20,4 @@
         android:layout_alignParentEnd="true"
         android:textSize="20sp"
         android:layout_alignParentRight="true" />
-
 </RelativeLayout>

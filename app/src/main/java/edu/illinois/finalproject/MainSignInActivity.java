@@ -23,6 +23,7 @@ public class MainSignInActivity extends AppCompatActivity {
     // Request code will be used to verify if result comes from the login activity. Can be set to any integer.
     public static final String CLIENT_ID = "089d841ccc194c10a77afad9e1c11d54";
     private static final int REQUEST_CODE = 1337;
+    private static String mAccessToken;
 
     /**
      * This function sets up the activity
@@ -68,9 +69,10 @@ public class MainSignInActivity extends AppCompatActivity {
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
             final AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
+            mAccessToken = response.getAccessToken();
 
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                openActivity(this, DJHomeActivity.class);
+                openActivity(this, CreateRoomActivity.class);
             }
         }
     }
@@ -86,7 +88,7 @@ public class MainSignInActivity extends AppCompatActivity {
     private AuthenticationRequest getAuthenticationRequest(final AuthenticationResponse.Type type) {
         return new AuthenticationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(false)
-                .setScopes(new String[]{"playlist-read-private"})
+                .setScopes(new String[]{"playlist-read-private", "playlist-read-collaborative"})
                 .setCampaign("your-campaign-token")
                 .build();
     }
@@ -101,6 +103,10 @@ public class MainSignInActivity extends AppCompatActivity {
                 .scheme(getString(R.string.com_spotify_sdk_redirect_scheme))
                 .authority(getString(R.string.com_spotify_sdk_redirect_host))
                 .build();
+    }
+
+    public static String getAccessToken() {
+        return mAccessToken;
     }
 
 }

@@ -22,4 +22,9 @@
     <string name="room_distance">N m</string>
     <string name="choose">Choose</string>
     <string name="playlist_name">Playlist Name</string>
+    <string name="my_playlists">My Playlists</string>
+    <string name="enter_room_name">Enter room name...</string>
+    <string name="room_access">Room Access:</string>
+    <string name="enter_password">Enter password...</string>
+    <string name="pass">Password:</string>
 </resources>

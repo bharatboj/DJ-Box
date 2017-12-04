@@ -3,8 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lightGreen"
     android:orientation="vertical"
-    android:padding="25dp">
+    android:padding="25sp">
 
     <TextView
         style="?android:listSeparatorTextViewStyle"
@@ -18,7 +19,7 @@
         android:id="@+id/tv_playlists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="My Playlists"
+        android:text="@string/my_playlists"
         android:textSize="20sp" />
 
     <TextView
@@ -41,13 +42,15 @@
             android:layout_margin="10dp"
             android:layout_weight="1"
             android:divider="#000000"
-            android:dividerHeight="1sp" />
+            android:dividerHeight="1sp"
+            android:listSelector="#909090" />
 
         <Button
             android:id="@+id/b_choose_playlist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
+            android:onClick="oncePlaylistChosen"
             android:text="@string/choose" />
     </LinearLayout>
 

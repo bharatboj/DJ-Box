@@ -3,8 +3,10 @@ package edu.illinois.finalproject;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -16,8 +18,13 @@ import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
 import static edu.illinois.finalproject.ActivityUtils.roomsRef;
+import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
 
 public class SelectPlaylistActivity extends AppCompatActivity {
+
+    private ListView roomList;
+
+    private String chosenPlaylist;
 
     /**
      * This function sets up the activity
@@ -30,18 +37,17 @@ public class SelectPlaylistActivity extends AppCompatActivity {
         setContentView(R.layout.select_playlist);
 
         roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
+        roomList = (ListView) findViewById(R.id.lv_playlists_list);
+        chosenPlaylist = "";
 
         displayPlaylists();
+        setPlaylistOnClick();
     }
 
     private void displayPlaylists() {
-        final ListView roomList = (ListView) findViewById(R.id.lv_playlists_list);
-
         SpotifyApi api = new SpotifyApi();
 
-        final String accessToken = "BQCy6XnCcXUrLcUbkfubhUZQMSAnaIfUXD8Zcn-30VJ6gN2ionzZGV" +
-                "8VgHk24Fdt_dyo3gQGCH4_SkxkMIPQTF4RBcnCF6Cq-ILN-ov9oY6cq0D8br6ZfmxL" +
-                "JHvuQxHOjV5x_mYOy4ler9Ol-aXqQ5vXoDX08KmeYTxd";
+        final String accessToken = getAccessToken();
         api.setAccessToken(accessToken);
         SpotifyService spotify = api.getService();
 
@@ -54,9 +60,21 @@ public class SelectPlaylistActivity extends AppCompatActivity {
             playlists.add(playlist.name);
         }
 
-        ArrayAdapter a = new ArrayAdapter<>(this, R.layout.select_playlist_list_item
+        ArrayAdapter playlistsAdapter = new ArrayAdapter<>(this, R.layout.select_playlist_list_item
                 , R.id.tv_playlist_name, playlists);
 
-        roomList.setAdapter(a);
+        roomList.setAdapter(playlistsAdapter);
     }
+
+    private void setPlaylistOnClick() {
+        roomList.setOnItemClickListener((adapterView, playlistView, pos, id) ->
+                chosenPlaylist = adapterView.getItemAtPosition(pos).toString());
+    }
+
+    public void oncePlaylistChosen(View view) {
+        ((TextView) findViewById(R.id.tv_playlists)).setText(chosenPlaylist);
+
+
+    }
+
 }

@@ -12,6 +12,7 @@ import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.FirebaseDatabase;
 
+import static edu.illinois.finalproject.ActivityUtils.openActivity;
 import static edu.illinois.finalproject.ActivityUtils.roomsRef;
 
 public class JoinRoomActivity extends AppCompatActivity {
@@ -58,5 +59,9 @@ public class JoinRoomActivity extends AppCompatActivity {
         });
 
         return loc[0];
+    }
+
+    public void onJoinButtonPressed(View view) {
+        openActivity(this, SelectPlaylistActivity.class);
     }
 }

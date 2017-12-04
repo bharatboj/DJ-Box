@@ -20,4 +20,6 @@
     <string name="join">Join</string>
     <string name="room_name">Room Name</string>
     <string name="room_distance">N m</string>
+    <string name="choose">Choose</string>
+    <string name="playlist_name">Playlist Name</string>
 </resources>

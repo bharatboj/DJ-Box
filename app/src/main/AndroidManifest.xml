@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.illinois.finalproject">
-
+    <permission android:name="edu.illinois.finalproject.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature"/>
+    <uses-permission android:name="com.weaverprojects.gpstest.permission.MAPS_RECEIVE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -13,8 +19,10 @@
         android:supportsRtl="true"
         android:fullBackupContent="true"
         android:theme="@style/AppTheme">
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
         <activity
-            android:name=".JoinRoomActivity"
+            android:name=".SelectPlaylistActivity"
             android:configChanges="keyboardHidden|keyboard|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -33,11 +41,11 @@
             android:name=".CreateRoomActivity"
             android:label="Create Room"></activity>
         <activity
-            android:name=".SelectPlaylistActivity"
+            android:name=".MainSignInActivity"
             android:label="Select Playlist">
         </activity>
         <activity
-            android:name=".MainSignInActivity"
+            android:name=".JoinRoomActivity"
             android:label="Join Room">
         </activity>
     </application>

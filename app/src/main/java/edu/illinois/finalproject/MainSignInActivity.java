@@ -10,7 +10,7 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import static edu.illinois.finalproject.ActivityUtils.openActivity;
+import static edu.illinois.finalproject.DJBoxUtils.openActivity;
 
 /**
  * A fair amount of code, such as the getAuthenticationRequest() and getRedirect url, was reused
@@ -88,7 +88,13 @@ public class MainSignInActivity extends AppCompatActivity {
     private AuthenticationRequest getAuthenticationRequest(final AuthenticationResponse.Type type) {
         return new AuthenticationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(false)
-                .setScopes(new String[]{"playlist-read-private", "playlist-read-collaborative"})
+                .setScopes(new String[]{"playlist-read-private", "playlist-read-collaborative"
+                        , "playlist-modify-public", "playlist-modify-private", "streaming"
+                        , "ugc-image-upload", "user-follow-modify", "user-follow-read"
+                        , "user-library-read", "user-library-modify", "user-read-private"
+                        , "user-read-birthdate", "user-read-email", "user-top-read"
+                        , "user-read-playback-state", "user-modify-playback-state"
+                        , "user-read-currently-playing", "user-read-recently-played"})
                 .setCampaign("your-campaign-token")
                 .build();
     }

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
@@ -21,7 +22,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
 
-class ActivityUtils extends AppCompatActivity {
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+
+import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
+
+class DJBoxUtils extends AppCompatActivity {
 
     /**
      * This function allows user to open an Activity from a different Activity
@@ -33,6 +39,19 @@ class ActivityUtils extends AppCompatActivity {
     static void openActivity(final Context packageContext, final Class classToOpen) {
         Intent intentToOpenActivity = new Intent(packageContext, classToOpen);
         packageContext.startActivity(intentToOpenActivity);
+    }
+
+    static SpotifyService getSpotifyService() {
+        SpotifyApi api = new SpotifyApi();
+
+        final String accessToken = getAccessToken();
+        api.setAccessToken(accessToken);
+        SpotifyService spotify = api.getService();
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        return spotify;
     }
 
     static DatabaseReference roomsRef;

@@ -1,30 +1,31 @@
 package edu.illinois.finalproject;
 
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
+import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
-import static edu.illinois.finalproject.ActivityUtils.roomsRef;
-import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
+import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
+import static edu.illinois.finalproject.DJBoxUtils.roomsRef;
 
 public class SelectPlaylistActivity extends AppCompatActivity {
 
     private ListView roomList;
 
-    private String chosenPlaylist;
+    private int chosenPlaylistPos;
+    List<PlaylistSimple> playlists;
 
     /**
      * This function sets up the activity
@@ -38,43 +39,49 @@ public class SelectPlaylistActivity extends AppCompatActivity {
 
         roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
         roomList = (ListView) findViewById(R.id.lv_playlists_list);
-        chosenPlaylist = "";
+        playlists = new ArrayList<>();
 
+        setPlaylists();
         displayPlaylists();
-        setPlaylistOnClick();
+        recordPlaylistOnClick();
+    }
+
+    private void setPlaylists() {
+        SpotifyService spotify = getSpotifyService();
+        playlists.addAll(spotify.getMyPlaylists().items);
     }
 
     private void displayPlaylists() {
-        SpotifyApi api = new SpotifyApi();
-
-        final String accessToken = getAccessToken();
-        api.setAccessToken(accessToken);
-        SpotifyService spotify = api.getService();
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
-        StrictMode.setThreadPolicy(policy);
-
-        List<String> playlists = new ArrayList<>();
-        for (PlaylistSimple playlist : spotify.getMyPlaylists().items) {
-            playlists.add(playlist.name);
+        List<String> playlistNames = new ArrayList<>();
+        for (PlaylistSimple playlist : playlists) {
+            playlistNames.add(playlist.name);
         }
 
         ArrayAdapter playlistsAdapter = new ArrayAdapter<>(this, R.layout.select_playlist_list_item
-                , R.id.tv_playlist_name, playlists);
+                , R.id.tv_playlist_name, playlistNames);
 
         roomList.setAdapter(playlistsAdapter);
     }
 
-    private void setPlaylistOnClick() {
+    private void recordPlaylistOnClick() {
         roomList.setOnItemClickListener((adapterView, playlistView, pos, id) ->
-                chosenPlaylist = adapterView.getItemAtPosition(pos).toString());
+                chosenPlaylistPos = pos);
     }
 
-    public void oncePlaylistChosen(View view) {
-        ((TextView) findViewById(R.id.tv_playlists)).setText(chosenPlaylist);
+    public void addPlaylistOnceChosen(View view) {
+        SpotifyService spotify = getSpotifyService();
+        String userID = spotify.getMe().id;
+        String playlistID = playlists.get(chosenPlaylistPos).id;
+        List<PlaylistTrack> playlistTracks = spotify.getPlaylistTracks(userID, playlistID).items;
 
+        Map<String, Object> playlistSongIDs = new HashMap<>();
 
+        for (int index = 0; index < playlistTracks.size(); index++) {
+            playlistSongIDs.put(String.valueOf(index), playlistTracks.get(index));
+        }
+
+        // add a playlist containing the songIDs
+        roomsRef.child("R5").child("Playlist").updateChildren(playlistSongIDs);
     }
 
 }

@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.CookieManager;
 
-import static edu.illinois.finalproject.ActivityUtils.openActivity;
+import static edu.illinois.finalproject.DJBoxUtils.openActivity;
 
 public class DJHomeActivity extends AppCompatActivity {
 

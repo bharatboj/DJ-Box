@@ -12,8 +12,8 @@ import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.FirebaseDatabase;
 
-import static edu.illinois.finalproject.ActivityUtils.openActivity;
-import static edu.illinois.finalproject.ActivityUtils.roomsRef;
+import static edu.illinois.finalproject.DJBoxUtils.openActivity;
+import static edu.illinois.finalproject.DJBoxUtils.roomsRef;
 
 public class JoinRoomActivity extends AppCompatActivity {
 

@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "654776019434",
-    "firebase_url": "https://final-project-bharatboj.firebaseio.com",
-    "project_id": "final-project-bharatboj",
-    "storage_bucket": "final-project-bharatboj.appspot.com"
+    "project_number": "702201990795",
+    "firebase_url": "https://dj-box.firebaseio.com",
+    "project_id": "dj-box",
+    "storage_bucket": "dj-box.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:654776019434:android:8c3c92acc5929740",
+        "mobilesdk_app_id": "1:702201990795:android:edbe6dfd27a571c4",
         "android_client_info": {
-          "package_name": "edu.illinois.techdemonstration"
+          "package_name": "edu.illinois.firebasedemo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "654776019434-hog9qi4o8rfkl09gh4f4rg22qqsg927i.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "edu.illinois.techdemonstration",
-            "certificate_hash": "75d45bfc78a2b662752e2806ad299bd358ae9169"
-          }
-        },
-        {
-          "client_id": "654776019434-p0hlo2bh13qi4ggs1cjp6c7k6u9frrs5.apps.googleusercontent.com",
+          "client_id": "702201990795-38a61qadbmphotu5au8kps2ftkf11a93.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAEmOq2ryi_LmegNkRss9k1IFpohNsN5Xc"
+          "current_key": "AIzaSyChBzrl_xTKltuxTSodsYWLDoWzqbDLx_Q"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "654776019434-p0hlo2bh13qi4ggs1cjp6c7k6u9frrs5.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
@@ -52,28 +39,20 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:654776019434:android:d3c190f37d1163ae",
+        "mobilesdk_app_id": "1:702201990795:android:d3c190f37d1163ae",
         "android_client_info": {
           "package_name": "edu.illinois.finalproject"
         }
       },
       "oauth_client": [
         {
-          "client_id": "654776019434-vjvt0l08ifqnu2aohnidc2no5i47e1qk.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "edu.illinois.finalproject",
-            "certificate_hash": "75d45bfc78a2b662752e2806ad299bd358ae9169"
-          }
-        },
-        {
-          "client_id": "654776019434-p0hlo2bh13qi4ggs1cjp6c7k6u9frrs5.apps.googleusercontent.com",
+          "client_id": "702201990795-38a61qadbmphotu5au8kps2ftkf11a93.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAEmOq2ryi_LmegNkRss9k1IFpohNsN5Xc"
+          "current_key": "AIzaSyChBzrl_xTKltuxTSodsYWLDoWzqbDLx_Q"
         }
       ],
       "services": {
@@ -81,13 +60,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "654776019434-p0hlo2bh13qi4ggs1cjp6c7k6u9frrs5.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

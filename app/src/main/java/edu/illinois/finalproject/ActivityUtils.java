@@ -237,8 +237,7 @@ class ActivityUtils extends AppCompatActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    static String[] getRoomsAttributeVals(String roomAttribute) throws Exception {
-        setRoomsSnapshot();
+    static String[] getRoomsAttributeVals(String roomAttribute) {
         String[] roomIDs = getSnapshotKeysArray(roomsSnapshot);
 
         return Arrays.stream(roomIDs).map(roomID -> roomsSnapshot.child(roomID)

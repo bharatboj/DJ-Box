@@ -2,9 +2,14 @@ package edu.illinois.finalproject;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import static edu.illinois.finalproject.ActivityUtils.getRoomsAttributeVals;
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.FirebaseDatabase;
+
+import static edu.illinois.finalproject.ActivityUtils.roomsRef;
 
 public class JoinRoomActivity extends AppCompatActivity {
 
@@ -18,23 +23,24 @@ public class JoinRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.join_room);
 
+        roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
 
-        try {
-            displayListOfRooms();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        displayListOfRooms();
     }
 
-    public void displayListOfRooms() throws Exception {
-        String[] roomNames = getRoomsAttributeVals("Name");
-//        String[] latitudes = getRoomsAttributeVals("lat");
-//        String[] longitudes = getRoomsAttributeVals("long");
+    public void displayListOfRooms() {
+        final ListView roomList = (ListView) findViewById(R.id.rv_join_room_list);
 
-        TextView a = (TextView) findViewById(R.id.tv_rooms);
-        TextView b = (TextView) findViewById(R.id.tv_room_distance);
+        FirebaseListAdapter roomAdapter = new FirebaseListAdapter<Room>
+                (this, Room.class, R.layout.join_room_list_item, roomsRef) {
 
-        a.setText("defends");//roomNames[roomNames.length]);
+            @Override
+            protected void populateView(View view, Room model, int position) {
+                TextView nameTextView = (TextView) view.findViewById(R.id.tv_room_name);
+                nameTextView.setText(model.getName());
+            }
+        };
 
+        roomList.setAdapter(roomAdapter);
     }
 }

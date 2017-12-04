@@ -40,9 +40,7 @@ public class JoinRoomActivity extends AppCompatActivity {
             @Override
             protected void populateView(View view, Room model, int position) {
                 TextView nameTextView = (TextView) view.findViewById(R.id.tv_room_name);
-                Location location = getLocation();
                 nameTextView.setText(model.getName());
-//                nameTextView.setText(String.valueOf(getLocation().getLatitude()));
             }
         };
 

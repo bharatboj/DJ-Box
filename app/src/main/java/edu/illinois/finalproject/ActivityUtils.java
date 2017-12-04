@@ -1,5 +1,6 @@
 package edu.illinois.finalproject;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -12,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -234,6 +236,15 @@ class ActivityUtils extends AppCompatActivity {
         return (int) roomsSnapshot.child(roomID).child("Playlist").getChildrenCount();
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
+    static String[] getRoomsAttributeVals(String roomAttribute) throws Exception {
+        setRoomsSnapshot();
+        String[] roomIDs = getSnapshotKeysArray(roomsSnapshot);
+
+        return Arrays.stream(roomIDs).map(roomID -> roomsSnapshot.child(roomID)
+                .child(roomAttribute).getValue(String.class)).toArray(String[]::new);
+    }
+
     /**
      * Returns an List of values of Datasnapshot of an array of Strings
      *
@@ -257,19 +268,10 @@ class ActivityUtils extends AppCompatActivity {
      * @param arraySnapshot     DataSnapshot representing the snapshot of an array of sub-snapshots
      * @return                  a String[] array containing the keys of an array
      */
+    @TargetApi(Build.VERSION_CODES.N)
     static String[] getSnapshotKeysArray(final DataSnapshot arraySnapshot) {
         // converts snapshot's children of type Iterable<String> to a String[]
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return StreamSupport.stream(arraySnapshot.getChildren().spliterator(), false)
-                    .map(DataSnapshot::getKey).toArray(String[]::new);
-        } else {
-            List<String> stringList = new ArrayList<>();
-
-            for (DataSnapshot val : arraySnapshot.getChildren()) {
-                stringList.add(val.getKey());
-            }
-
-            return stringList.toArray(new String[stringList.size()]);
-        }
+        return StreamSupport.stream(arraySnapshot.getChildren().spliterator(), false)
+                .map(DataSnapshot::getKey).toArray(String[]::new);
     }
 }

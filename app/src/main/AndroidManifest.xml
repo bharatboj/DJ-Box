@@ -3,6 +3,7 @@
     package="edu.illinois.finalproject">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -13,7 +14,7 @@
         android:fullBackupContent="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainSignInActivity"
+            android:name=".JoinRoomActivity"
             android:configChanges="keyboardHidden|keyboard|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -34,6 +35,10 @@
         <activity
             android:name=".SelectPlaylistActivity"
             android:label="Select Playlist">
+        </activity>
+        <activity
+            android:name=".MainSignInActivity"
+            android:label="Join Room">
         </activity>
     </application>
 

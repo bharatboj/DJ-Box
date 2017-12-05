@@ -11,5 +11,5 @@
         android:layout_height="wrap_content"
         android:text="@string/room_name"
         android:textSize="20sp"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:textColor="#999999"/>
 </RelativeLayout>

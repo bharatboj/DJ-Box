@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightGreen"
+    android:background="#333333"
     android:orientation="vertical"
     android:padding="25sp">
 
@@ -12,14 +12,15 @@
         android:layout_height="1dp"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:background="@color/colorPrimaryDark" />
+        android:background="#999999" />
 
     <TextView
         android:id="@+id/tv_rooms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/rooms"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:textColor="#999999" />
 
     <TextView
         style="?android:listSeparatorTextViewStyle"
@@ -27,7 +28,7 @@
         android:layout_height="1dp"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:background="@color/colorPrimaryDark" />
+        android:background="#999999" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +41,7 @@
             android:layout_height="0dp"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:divider="#000000"
+            android:divider="#777777"
             android:dividerHeight="1sp" />
 
         <Button
@@ -49,7 +50,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:text="@string/join"
-            android:onClick="onJoinButtonPressed" />
+            android:onClick="onJoinButtonPressed"
+            android:background="@color/lightGreen" />
     </LinearLayout>
 
 </LinearLayout>

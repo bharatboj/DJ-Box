@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/playlist_name"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="#999999"
             android:textSize="20sp" />
 
         <TextView
@@ -28,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/creator_name"
+            android:textColor="#999999"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp" />
 
@@ -35,6 +36,7 @@
             android:id="@+id/tv_playlist_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#999999"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
             android:text="@string/songs_hr_min" />

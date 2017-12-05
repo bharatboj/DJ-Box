@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="#333333">
 
     <TextView
         android:id="@+id/tv_sign_in_as"
@@ -12,6 +13,7 @@
         android:layout_height="wrap_content"
         android:text="@string/sign_in_as"
         android:textSize="30sp"
+        android:textColor="#999999"
         android:layout_margin="20dp"/>
 
     <Button
@@ -20,7 +22,8 @@
         android:layout_height="wrap_content"
         android:text="@string/disk_jockey"
         android:onClick="onDJButtonClicked"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        android:background="@color/lightGreen"/>
 
     <Button
         android:id="@+id/b_aud_sign_in"
@@ -29,5 +32,6 @@
         android:layout_margin="10sp"
         android:text="@string/audience"
         android:onClick="onAudienceButtonClicked"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        android:background="@color/lightGreen"/>
 </LinearLayout>

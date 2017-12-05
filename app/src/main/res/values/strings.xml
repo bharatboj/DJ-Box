@@ -29,4 +29,6 @@
     <string name="playlist_name">Playlist Name</string>
     <string name="creator_name">Creator Name</string>
     <string name="songs_hr_min"># songs, # hr # min</string>
+    <string name="private_password_protected">Private (password-protected)</string>
+    <string name="create">Create</string>
 </resources>

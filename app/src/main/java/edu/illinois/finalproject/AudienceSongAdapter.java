@@ -14,11 +14,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-// Used code from url below as reference:
-// https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
-public class SongAdapter extends ArrayAdapter<SongItem> {
-
-    private static class SongViewHolder {
+public class AudienceSongAdapter extends ArrayAdapter<SongItem> {
+    private static class AudienceSongViewHolder {
         ImageView songImageView;
         TextView nameTextView;
         TextView artistsTextView;
@@ -26,8 +23,8 @@ public class SongAdapter extends ArrayAdapter<SongItem> {
         ToggleButton likeButton;
     }
 
-    SongAdapter(Context context, List<SongItem> songs) {
-        super(context, R.layout.dj_home_song_item, songs);
+    AudienceSongAdapter(Context context, List<SongItem> songs) {
+        super(context, R.layout.audience_home_song_item, songs);
     }
 
     @NonNull
@@ -37,22 +34,22 @@ public class SongAdapter extends ArrayAdapter<SongItem> {
 
         if (itemView == null) {
             itemView = LayoutInflater.from(getContext())
-                    .inflate(R.layout.dj_home_song_item, parent, false);
+                    .inflate(R.layout.audience_home_song_item, parent, false);
         }
 
-        SongViewHolder viewHolder = new SongViewHolder();
-        viewHolder.nameTextView = (TextView) itemView.findViewById(R.id.tv_song_name);
-        viewHolder.artistsTextView = (TextView) itemView.findViewById(R.id.tv_artists);
-        viewHolder.numLikesTextView = (TextView) itemView.findViewById(R.id.tv_num_likes);
-        viewHolder.songImageView = (ImageView) itemView.findViewById(R.id.iv_song);
-        viewHolder.likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite);
+        AudienceSongViewHolder viewHolder = new AudienceSongViewHolder();
+        viewHolder.nameTextView = (TextView) itemView.findViewById(R.id.tv_song_name_aud);
+        viewHolder.artistsTextView = (TextView) itemView.findViewById(R.id.tv_artists_aud);
+        viewHolder.numLikesTextView = (TextView) itemView.findViewById(R.id.tv_num_likes_aud);
+        viewHolder.songImageView = (ImageView) itemView.findViewById(R.id.iv_song_aud);
+        viewHolder.likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite_aud);
 
         populateViews(viewHolder, itemView, song);
 
         return itemView;
     }
 
-    private void populateViews(SongViewHolder viewHolder, View itemView, SongItem song) {
+    private void populateViews(AudienceSongViewHolder viewHolder, View itemView, SongItem song) {
         viewHolder.nameTextView.setText(song.getName());
         viewHolder.artistsTextView.setText(song.getArtists());
         viewHolder.numLikesTextView.setText(String.valueOf(song.getNumLikes()));

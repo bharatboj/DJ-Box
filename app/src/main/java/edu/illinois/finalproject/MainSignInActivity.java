@@ -42,7 +42,7 @@ public class MainSignInActivity extends AppCompatActivity {
      * @param view      View object that has actions performed when clicked on
      */
     public void onAudienceButtonClicked(final View view) {
-        openActivity(this, AudienceHomeActivity.class);
+        openActivity(this, JoinRoomActivity.class);
     }
 
     /**

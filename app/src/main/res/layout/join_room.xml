@@ -42,7 +42,8 @@
             android:layout_margin="10dp"
             android:layout_weight="1"
             android:divider="#777777"
-            android:dividerHeight="1sp" />
+            android:dividerHeight="1sp"
+            android:listSelector="#202020" />
 
         <Button
             android:id="@+id/b_join_room"

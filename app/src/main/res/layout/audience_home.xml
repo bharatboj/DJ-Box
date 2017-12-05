@@ -1,68 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#333333"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:background="#333333">
+    android:padding="25dp">
 
-</LinearLayout>
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:gravity="center_horizontal"
-android:orientation="vertical"
-android:padding="25dp"
-android:background="#333333">
-
-<TextView
-    style="?android:listSeparatorTextViewStyle"
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:layout_marginBottom="5dp"
-    android:layout_marginTop="5dp"
-    android:background="#999999" />
-
-<TextView
-    android:id="@+id/tv_rooms"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/queue"
-    android:textSize="20sp"
-    android:textColor="#999999" />
-
-<TextView
-    style="?android:listSeparatorTextViewStyle"
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:layout_marginBottom="5dp"
-    android:layout_marginTop="5dp"
-    android:background="#999999" />
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <ListView
-        android:id="@+id/lv_playlist_songs"
+    <TextView
+        style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:divider="#777777"
-        android:dividerHeight="1sp" />
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="#999999" />
 
-    <Button
-        android:id="@+id/b_logout"
+    <TextView
+        android:id="@+id/tv_queue_aud"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="@string/log_out"
-        android:onClick="onLogOutButtonClicked" />
-</LinearLayout>
+        android:text="@string/queue"
+        android:textColor="#999999"
+        android:textSize="20sp" />
+
+    <TextView
+        style="?android:listSeparatorTextViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="#999999" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/lv_playlist_songs_aud"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:divider="#777777"
+            android:dividerHeight="1sp" />
+    </LinearLayout>
 
 </LinearLayout>

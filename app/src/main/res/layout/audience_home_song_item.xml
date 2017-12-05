@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rl_song_list_item"
+    android:id="@+id/rl_song_list_item_aud"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="10dp">
 
     <ImageView
-        android:id="@+id/iv_song"
+        android:id="@+id/iv_song_aud"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentStart="true"
@@ -16,7 +16,7 @@
         android:contentDescription="@string/playlist_picture" />
 
     <LinearLayout
-        android:id="@+id/ll_song_description"
+        android:id="@+id/ll_song_description_aud"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="55dp"
@@ -27,7 +27,7 @@
         android:layout_marginEnd="75dp">
 
         <TextView
-            android:id="@+id/tv_song_name"
+            android:id="@+id/tv_song_name_aud"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/song_name"
@@ -35,7 +35,7 @@
             android:textColor="#999999"/>
 
         <TextView
-            android:id="@+id/tv_artists"
+            android:id="@+id/tv_artists_aud"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/artist_names"
@@ -43,39 +43,29 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_num_likes"
+        android:id="@+id/tv_num_likes_aud"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="33dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="50dp"
         android:text="#"
-        android:textSize="17sp"
+        android:textSize="20sp"
         android:textColor="#999999"
         android:layout_marginRight="35dp" />
 
     <ToggleButton
-        android:id="@+id/tb_favorite"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:id="@+id/tb_favorite_aud"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/likes_dj"
+        android:layout_centerVertical="true"
+        android:background="@drawable/tb_favorite"
         android:checked="false"
         android:text=""
         android:textOff=""
         android:textOn=""/>
-
-    <TextView
-        android:id="@+id/tv_duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/min_sec"
-        android:layout_marginTop="30dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:textColor="#999999"/>
 
 </RelativeLayout>

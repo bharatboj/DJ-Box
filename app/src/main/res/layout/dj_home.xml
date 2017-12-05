@@ -17,7 +17,7 @@
         android:background="#999999" />
 
     <TextView
-        android:id="@+id/tv_rooms"
+        android:id="@+id/tv_queue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/queue"

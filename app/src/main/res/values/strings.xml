@@ -34,4 +34,5 @@
     <string name="queue">Queue</string>
     <string name="song_name">Song Name</string>
     <string name="artist_names">Artist Names</string>
+    <string name="min_sec">min:sec</string>
 </resources>

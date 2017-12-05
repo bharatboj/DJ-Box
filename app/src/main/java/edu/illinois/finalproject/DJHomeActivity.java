@@ -88,9 +88,9 @@ public class DJHomeActivity extends AppCompatActivity {
                     , track.album.images.get(0).url));
         }
 
-        SongAdapter songAdapter = new SongAdapter(this, songItems);
+        DJSongAdapter DJSongAdapter = new DJSongAdapter(this, songItems);
 
-        songsList.setAdapter(songAdapter);
+        songsList.setAdapter(DJSongAdapter);
     }
 
     private String getArtistsAsString(List<ArtistSimple> artistList) {

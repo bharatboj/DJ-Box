@@ -1,7 +1,5 @@
 package edu.illinois.finalproject;
 
-import android.annotation.SuppressLint;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -9,7 +7,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
-import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.FirebaseDatabase;
 
 import static edu.illinois.finalproject.DJBoxUtils.openActivity;
@@ -48,20 +45,7 @@ public class JoinRoomActivity extends AppCompatActivity {
         roomList.setAdapter(roomAdapter);
     }
 
-    @SuppressLint("MissingPermission")
-    private Location getLocation() {
-        Location[] loc = new Location[1];
-        LocationServices.getFusedLocationProviderClient(this).getLastLocation().addOnSuccessListener(this, location -> {
-            // Got last known location. In some rare situations this can be null.
-            if (location != null) {
-                loc[0] = location;
-            }
-        });
-
-        return loc[0];
-    }
-
     public void onJoinButtonPressed(View view) {
-        openActivity(this, SelectPlaylistActivity.class);
+        openActivity(this, AudienceHomeActivity.class);
     }
 }

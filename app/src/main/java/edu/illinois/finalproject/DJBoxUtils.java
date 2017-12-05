@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,10 +26,15 @@ import java.util.stream.StreamSupport;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.ArtistSimple;
+import kaaes.spotify.webapi.android.models.Track;
 
 import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
 
 class DJBoxUtils extends AppCompatActivity {
+
+    static Map<Track, Integer> songs;
+    static String roomID;
 
     /**
      * This function allows user to open an Activity from a different Activity
@@ -291,5 +298,72 @@ class DJBoxUtils extends AppCompatActivity {
         // converts snapshot's children of type Iterable<String> to a String[]
         return StreamSupport.stream(arraySnapshot.getChildren().spliterator(), false)
                 .map(DataSnapshot::getKey).toArray(String[]::new);
+    }
+
+    private void updateSongs(ListView listView, User userType) {
+        String roomID = "R5";
+        DatabaseReference roomRef = FirebaseDatabase.getInstance()
+                .getReference("Rooms").child(roomID);
+
+        roomRef.child("Playlist").addValueEventListener(new ValueEventListener() {
+            @TargetApi(Build.VERSION_CODES.N)
+            @Override
+            public void onDataChange(DataSnapshot roomSnapshot) {
+                SpotifyService spotify = getSpotifyService();
+
+                // Searches each trackID in Iterable snapshot, gets associated Spotify Track for it,
+                // and creates a list of type Track containing each of these tracks
+
+                StreamSupport.stream(roomSnapshot.getChildren().spliterator()
+                        , false).forEach(trackID -> songs.put(spotify.getTrack(trackID.getValue(String.class))
+                        , getNumLikesForSong(roomSnapshot, trackID.getValue(String.class))));
+
+                displaySongs();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void displaySongs(ListView listView, User userType) {
+        List<SongItem> songItems = new ArrayList<>();
+        for (Track track : songs.keySet()) {
+            songItems.add(new SongItem(track.id, track.name, getArtistsAsString(track.artists)
+                    , getDurationAsString(track.duration_ms), songs.get(track)
+                    , track.album.images.get(0).url));
+        }
+
+        ArrayAdapter<SongItem> songAdapter;
+        if (userType == User.DISC_JOCKEY) {
+            songAdapter = new DJSongAdapter(this, songItems);
+        } else {
+            songAdapter = new AudienceSongAdapter(this, songItems);
+        }
+
+        listView.setAdapter(songAdapter);
+    }
+
+    private String getArtistsAsString(List<ArtistSimple> artistList) {
+        StringBuilder str = new StringBuilder();
+
+        for (ArtistSimple artist : artistList) {
+            str.append(artist.name).append(", ");
+        }
+
+        str.setLength(str.length() - 2);
+        return str.toString();
+    }
+
+    private int getNumLikesForSong(DataSnapshot roomSnapshot, String trackID) {
+        return (int) roomSnapshot.child("Songs").child(trackID).getChildrenCount();
+    }
+
+    private String getDurationAsString(long durationMs) {
+        int durationInMins = (int) durationMs / 60000;
+        int durationInSecs = (int) durationMs % 60000 / 1000;
+
+        return durationInMins + ":" + durationInSecs;
     }
 }

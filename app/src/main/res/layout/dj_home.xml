@@ -6,28 +6,29 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="25dp"
-    android:background="@color/colorPrimaryDark">
+    android:background="#122222">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="#000000"
-        android:dividerHeight=".5dp">
-    </ListView>
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="bottom">
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/lv_playlist_songs"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:divider="#000000"
+            android:dividerHeight="1sp" />
 
         <Button
             android:id="@+id/b_choose_playlist"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:onClick="onLogOutButtonClicked"
-            android:text="@string/log_out" />
-    </RelativeLayout>
+            android:layout_weight="0"
+            android:text="@string/log_out"
+            android:onClick="onLogOutButtonClicked" />
+    </LinearLayout>
 
 </LinearLayout>

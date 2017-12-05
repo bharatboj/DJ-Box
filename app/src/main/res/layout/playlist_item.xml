@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/l_select_playlist_list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -11,24 +13,28 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_playlist_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Playlist Name"
+            android:text="@string/playlist_name"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_playlist_owner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Creator Name"
+            android:text="@string/creator_name"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/tv_playlist_info"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
-            android:text="Number of songs, Playlist length" />
+            android:text="@string/songs_hr_min" />
     </LinearLayout>
 
     <ImageView

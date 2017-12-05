@@ -54,14 +54,37 @@ public class SelectPlaylistActivity extends AppCompatActivity {
 
     private void displayPlaylists() {
         List<String> playlistNames = new ArrayList<>();
+        List<String> playlistOwners = new ArrayList<>();
+        List<String> playlistInfo = new ArrayList<>();
         for (PlaylistSimple playlist : playlists) {
             playlistNames.add(playlist.name);
+            playlistOwners.add(playlist.owner.id);
+            int playlistDurationInMins = getPlaylistLengthInMins(playlist);
+            playlistInfo.add(playlist.tracks.total + "songs, " + (playlistDurationInMins / 60)
+                    + "hr " + (playlistDurationInMins % 60) + "min");
         }
 
-        ArrayAdapter playlistsAdapter = new ArrayAdapter<>(this, R.layout.select_playlist_list_item
-                , R.id.tv_playlist_name, playlistNames);
+        ArrayAdapter playlistNamesAdapter = new ArrayAdapter<>(this,
+                R.layout.select_playlist_list_item, R.id.tv_playlist_name, playlistNames);
+        ArrayAdapter playlistOwnersAdapter = new ArrayAdapter<>(this,
+                R.layout.select_playlist_list_item, R.id.tv_playlist_owner, playlistOwners);
+        ArrayAdapter playlistInfoAdapter = new ArrayAdapter<>(this,
+                R.layout.select_playlist_list_item, R.id.tv_playlist_info, playlistInfo);
 
-        roomList.setAdapter(playlistsAdapter);
+        roomList.setAdapter(playlistNamesAdapter);
+        roomList.setAdapter(playlistOwnersAdapter);
+        roomList.setAdapter(playlistInfoAdapter);
+    }
+
+    private int getPlaylistLengthInMins(PlaylistSimple playlist) {
+        List<PlaylistTrack> playlistTracks = getPlaylistTracks(playlists.get(chosenPlaylistPos));
+        int length = 0;
+
+        for (PlaylistTrack playlistTrack : playlistTracks) {
+            length += playlistTrack.track.duration_ms;
+        }
+
+        return (int) Math.round(length / 60000.0);
     }
 
     private void recordPlaylistOnClick() {
@@ -70,23 +93,10 @@ public class SelectPlaylistActivity extends AppCompatActivity {
     }
 
     public void addPlaylistOnceChosen(View view) {
-        SpotifyService spotify = getSpotifyService();
-        PlaylistSimple selectedPlaylist = playlists.get(chosenPlaylistPos);
         String roomID = "R5";
-        String playlistOwnerID = selectedPlaylist.owner.id;
-        String playlistID = selectedPlaylist.id;
+        List<PlaylistTrack> playlistTracks = getPlaylistTracks(playlists.get(chosenPlaylistPos));
 
         Map<String, Object> playlistSongIDs = new HashMap<>();
-        List<PlaylistTrack> playlistTracks = new ArrayList<>();
-
-        Map<String, Object> options = new HashMap<>();
-        options.put(SpotifyService.LIMIT, 100);
-
-        for (int offset = 0; offset < selectedPlaylist.tracks.total; offset += 100) {
-            options.put(SpotifyService.OFFSET, offset);
-            playlistTracks.addAll(spotify.getPlaylistTracks(playlistOwnerID, playlistID, options).items);
-        }
-
         for (int index = 0; index < playlistTracks.size(); index++) {
             playlistSongIDs.put(String.valueOf(index), playlistTracks.get(index).track.id);
         }
@@ -96,6 +106,24 @@ public class SelectPlaylistActivity extends AppCompatActivity {
                 .child(roomID).child("Playlist").updateChildren(playlistSongIDs);
 
         openActivity(this, DJHomeActivity.class);
+    }
+
+    private List<PlaylistTrack> getPlaylistTracks(PlaylistSimple playlist) {
+        String playlistOwnerID = playlist.owner.id;
+        String playlistID = playlist.id;
+
+        SpotifyService spotify = getSpotifyService();
+        List<PlaylistTrack> playlistTracks = new ArrayList<>();
+
+        Map<String, Object> options = new HashMap<>();
+        options.put(SpotifyService.LIMIT, 100);
+
+        for (int offset = 0; offset < playlist.tracks.total; offset += 100) {
+            options.put(SpotifyService.OFFSET, offset);
+            playlistTracks.addAll(spotify.getPlaylistTracks(playlistOwnerID, playlistID, options).items);
+        }
+
+        return playlistTracks;
     }
 
 }

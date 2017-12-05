@@ -16,9 +16,16 @@ import java.util.List;
 // Used code from url below as reference:
 // https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
 public class PlaylistAdapter extends ArrayAdapter<PlaylistItem> {
-    PlaylistAdapter(Context context, List<PlaylistItem> playlists) {
 
-        super(context, 0, playlists);
+    private static class PlaylistViewHolder {
+        TextView nameTextView;
+        TextView ownerTextView;
+        TextView infoTextView;
+        ImageView playlistImageView;
+    }
+
+    PlaylistAdapter(Context context, List<PlaylistItem> playlists) {
+        super(context, R.layout.playlist_item, playlists);
     }
 
     @NonNull
@@ -27,29 +34,31 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistItem> {
         PlaylistItem playlist = getItem(pos);
 
         if (itemView == null) {
-            itemView = LayoutInflater.from(getContext()).inflate(R.layout.playlist_item
-                    , parent, false);
+            itemView = LayoutInflater.from(getContext())
+                    .inflate(R.layout.playlist_item, parent, false);
         }
 
-        populateViews(itemView, playlist);
+        PlaylistViewHolder viewHolder;
+        viewHolder = new PlaylistViewHolder();
+        viewHolder.nameTextView = (TextView) itemView.findViewById(R.id.tv_playlist_name);
+        viewHolder.ownerTextView = (TextView) itemView.findViewById(R.id.tv_playlist_owner);
+        viewHolder.infoTextView = (TextView) itemView.findViewById(R.id.tv_playlist_info);
+        viewHolder.playlistImageView = (ImageView) itemView.findViewById(R.id.iv_playlist);
+
+        populateViews(viewHolder, itemView, playlist);
 
         return itemView;
     }
 
-    private void populateViews(View itemView, PlaylistItem playlist) {
-        TextView nameTextView = (TextView) itemView.findViewById(R.id.tv_playlist_name);
-        TextView ownerTextView = (TextView) itemView.findViewById(R.id.tv_playlist_owner);
-        TextView infoTextView = (TextView) itemView.findViewById(R.id.tv_playlist_info);
-        ImageView playlistImageView = (ImageView) itemView.findViewById(R.id.iv_playlist);
-
-        nameTextView.setText(playlist.getName());
-        ownerTextView.setText(playlist.getOwner());
-        infoTextView.setText(playlist.getInfo());
+    private void populateViews(PlaylistViewHolder viewHolder, View itemView, PlaylistItem playlist) {
+        viewHolder.nameTextView.setText(playlist.getName());
+        viewHolder.ownerTextView.setText(playlist.getOwner());
+        viewHolder.infoTextView.setText(playlist.getInfo());
 
         // load playlist image into PlaylistImageView only if playlist contains image,
         // else loads a default image Spotify normally uses
         String imageUrl = playlist.getImageUrl();
         Picasso.with(itemView.getContext())
-                .load(imageUrl).into(playlistImageView);
+                .load(imageUrl).into(viewHolder.playlistImageView);
     }
 }

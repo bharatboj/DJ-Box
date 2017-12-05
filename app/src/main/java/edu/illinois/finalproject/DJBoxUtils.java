@@ -194,11 +194,11 @@ class DJBoxUtils extends AppCompatActivity {
             // gets values of "PlaylistItem" snapshot as an Arraylist of Strings to represent the songs
             // in the playlist
             List<String> playlist =
-                    getSnapshotValsList(roomsSnapshot.child(roomID).child("PlaylistItem"));
+                    getSnapshotValsList(roomsSnapshot.child(roomID).child("Playlist"));
 
             // adds song to "PlaylistItem" if it does not exist there already
             if (!playlist.contains(spotifyID)) {
-                roomRef.child("PlaylistItem").child(String.valueOf(numSongsInPlaylist))
+                roomRef.child("Playlist").child(String.valueOf(numSongsInPlaylist))
                         .setValue(spotifyID);
             }
 
@@ -269,7 +269,7 @@ class DJBoxUtils extends AppCompatActivity {
      * @param arraySnapshot     DataSnapshot representing the snapshot of array of Strings
      * @return                  an List of values of DataSnapshot of an array of Strings
      */
-    private static List<String> getSnapshotValsList(final DataSnapshot arraySnapshot) {
+    static List<String> getSnapshotValsList(final DataSnapshot arraySnapshot) {
         List<String> stringList = new ArrayList<>();
 
         // adds each value of arraySnapshot to stringList

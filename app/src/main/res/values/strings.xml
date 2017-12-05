@@ -31,4 +31,6 @@
     <string name="songs_hr_min"># songs, # hr # min</string>
     <string name="private_password_protected">Private (password-protected)</string>
     <string name="create">Create</string>
+    <string name="queue">Queue</string>
+    <string name="song_name">Song Name</string>
 </resources>

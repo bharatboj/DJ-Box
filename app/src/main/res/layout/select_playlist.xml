@@ -45,7 +45,7 @@
             android:layout_weight="1"
             android:divider="#777777"
             android:dividerHeight="1sp"
-            android:listSelector="#909090" />
+            android:listSelector="#202020" />
 
         <Button
             android:id="@+id/b_choose_playlist"

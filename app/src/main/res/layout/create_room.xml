@@ -23,10 +23,10 @@
             android:id="@+id/et_room_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
             android:hint="@string/enter_room_name"
-            android:scrollHorizontally="true"
+            android:inputType="text"
             android:textAlignment="center"
-            android:textColor="#999999"
             android:textColorHint="#555555"
             android:background="#999"/>
     </LinearLayout>
@@ -107,7 +107,7 @@
             android:textSize="12sp"
             android:enabled="false"
             android:hint="@string/enter_password"
-            android:textColor="#999999"
+            android:inputType="text"
             android:textColorHint="#555555"
             android:background="#999" />
     </LinearLayout>

@@ -8,6 +8,30 @@
     android:padding="25dp"
     android:background="#333333">
 
+    <TextView
+        style="?android:listSeparatorTextViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="#999999" />
+
+    <TextView
+        android:id="@+id/tv_rooms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/queue"
+        android:textSize="20sp"
+        android:textColor="#999999" />
+
+    <TextView
+        style="?android:listSeparatorTextViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="#999999" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

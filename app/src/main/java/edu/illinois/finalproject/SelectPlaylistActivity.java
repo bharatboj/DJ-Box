@@ -22,7 +22,7 @@ import static edu.illinois.finalproject.DJBoxUtils.roomsRef;
 
 public class SelectPlaylistActivity extends AppCompatActivity {
 
-    private ListView roomList;
+    private ListView playlistList;
 
     private int chosenPlaylistPos;
     List<PlaylistSimple> playlists;
@@ -38,7 +38,7 @@ public class SelectPlaylistActivity extends AppCompatActivity {
         setContentView(R.layout.select_playlist);
 
         roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
-        roomList = (ListView) findViewById(R.id.lv_playlists_list);
+        playlistList = (ListView) findViewById(R.id.lv_playlists_list);
         playlists = new ArrayList<>();
 
         setPlaylists();
@@ -48,7 +48,8 @@ public class SelectPlaylistActivity extends AppCompatActivity {
 
     private void setPlaylists() {
         SpotifyService spotify = getSpotifyService();
-        for (PlaylistSimple playlist : spotify.getMyPlaylists().items) {
+        List<PlaylistSimple> playlistsList = spotify.getMyPlaylists().items;
+        for (PlaylistSimple playlist : playlistsList) {
             if (playlist.tracks.total > 0) {
                 playlists.add(playlist);
             }
@@ -68,7 +69,7 @@ public class SelectPlaylistActivity extends AppCompatActivity {
 
         PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, playlistItems);
 
-        roomList.setAdapter(playlistAdapter);
+        playlistList.setAdapter(playlistAdapter);
     }
 
     private int getPlaylistLengthInMins(PlaylistSimple playlist) {
@@ -83,7 +84,7 @@ public class SelectPlaylistActivity extends AppCompatActivity {
     }
 
     private void recordPlaylistOnClick() {
-        roomList.setOnItemClickListener((adapterView, playlistView, pos, id) ->
+        playlistList.setOnItemClickListener((adapterView, playlistView, pos, id) ->
                 chosenPlaylistPos = pos);
     }
 

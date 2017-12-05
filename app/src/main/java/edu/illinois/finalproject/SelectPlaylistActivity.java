@@ -18,6 +18,7 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
+import static edu.illinois.finalproject.DJBoxUtils.openActivity;
 import static edu.illinois.finalproject.DJBoxUtils.roomsRef;
 
 public class SelectPlaylistActivity extends AppCompatActivity {
@@ -70,18 +71,31 @@ public class SelectPlaylistActivity extends AppCompatActivity {
 
     public void addPlaylistOnceChosen(View view) {
         SpotifyService spotify = getSpotifyService();
-        String userID = spotify.getMe().id;
-        String playlistID = playlists.get(chosenPlaylistPos).id;
-        List<PlaylistTrack> playlistTracks = spotify.getPlaylistTracks(userID, playlistID).items;
+        PlaylistSimple selectedPlaylist = playlists.get(chosenPlaylistPos);
+        String roomID = "R5";
+        String playlistOwnerID = selectedPlaylist.owner.id;
+        String playlistID = selectedPlaylist.id;
 
         Map<String, Object> playlistSongIDs = new HashMap<>();
+        List<PlaylistTrack> playlistTracks = new ArrayList<>();
+
+        Map<String, Object> options = new HashMap<>();
+        options.put(SpotifyService.LIMIT, 100);
+
+        for (int offset = 0; offset < selectedPlaylist.tracks.total; offset += 100) {
+            options.put(SpotifyService.OFFSET, offset);
+            playlistTracks.addAll(spotify.getPlaylistTracks(playlistOwnerID, playlistID, options).items);
+        }
 
         for (int index = 0; index < playlistTracks.size(); index++) {
-            playlistSongIDs.put(String.valueOf(index), playlistTracks.get(index));
+            playlistSongIDs.put(String.valueOf(index), playlistTracks.get(index).track.id);
         }
 
         // add a playlist containing the songIDs
-        roomsRef.child("R5").child("Playlist").updateChildren(playlistSongIDs);
+        FirebaseDatabase.getInstance().getReference("Rooms")
+                .child(roomID).child("Playlist").updateChildren(playlistSongIDs);
+
+        openActivity(this, DJHomeActivity.class);
     }
 
 }

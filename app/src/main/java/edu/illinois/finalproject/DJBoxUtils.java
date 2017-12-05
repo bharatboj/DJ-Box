@@ -168,7 +168,7 @@ class DJBoxUtils extends AppCompatActivity {
         }
 
         // add a playlist containing the songIDs
-        roomsRef.child(roomID).child("Playlist").updateChildren(playlist);
+        roomsRef.child(roomID).child("PlaylistItem").updateChildren(playlist);
     }
 
     /**
@@ -191,14 +191,14 @@ class DJBoxUtils extends AppCompatActivity {
 
             int numSongsInPlaylist = getNumSongsInPlaylist(roomID);
 
-            // gets values of "Playlist" snapshot as an Arraylist of Strings to represent the songs
+            // gets values of "PlaylistItem" snapshot as an Arraylist of Strings to represent the songs
             // in the playlist
             List<String> playlist =
-                    getSnapshotValsList(roomsSnapshot.child(roomID).child("Playlist"));
+                    getSnapshotValsList(roomsSnapshot.child(roomID).child("PlaylistItem"));
 
-            // adds song to "Playlist" if it does not exist there already
+            // adds song to "PlaylistItem" if it does not exist there already
             if (!playlist.contains(spotifyID)) {
-                roomRef.child("Playlist").child(String.valueOf(numSongsInPlaylist))
+                roomRef.child("PlaylistItem").child(String.valueOf(numSongsInPlaylist))
                         .setValue(spotifyID);
             }
 
@@ -231,11 +231,11 @@ class DJBoxUtils extends AppCompatActivity {
         // only done if playlist exists
         if (lastSongKey >= 0) {
             // gets spotifyID of last song in playlist
-            String spotifyID = roomsSnapshot.child(roomID).child("Playlist")
+            String spotifyID = roomsSnapshot.child(roomID).child("PlaylistItem")
                     .child(String.valueOf(lastSongKey)).getValue(String.class);
 
             // removes the last song in playlist
-            roomsRef.child(roomID).child("Playlist")
+            roomsRef.child(roomID).child("PlaylistItem")
                     .child(String.valueOf(lastSongKey)).removeValue();
 
             // song should not exist in "Songs" if it does not exist in the playlist
@@ -252,7 +252,7 @@ class DJBoxUtils extends AppCompatActivity {
      */
     static int getNumSongsInPlaylist(final String roomID) throws Exception {
         setRoomsSnapshot();
-        return (int) roomsSnapshot.child(roomID).child("Playlist").getChildrenCount();
+        return (int) roomsSnapshot.child(roomID).child("PlaylistItem").getChildrenCount();
     }
 
     @TargetApi(Build.VERSION_CODES.N)

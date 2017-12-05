@@ -3,7 +3,6 @@ package edu.illinois.finalproject;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.firebase.database.FirebaseDatabase;
@@ -49,35 +48,31 @@ public class SelectPlaylistActivity extends AppCompatActivity {
 
     private void setPlaylists() {
         SpotifyService spotify = getSpotifyService();
-        playlists.addAll(spotify.getMyPlaylists().items);
+        for (PlaylistSimple playlist : spotify.getMyPlaylists().items) {
+            if (playlist.tracks.total > 0) {
+                playlists.add(playlist);
+            }
+        }
     }
 
     private void displayPlaylists() {
-        List<String> playlistNames = new ArrayList<>();
-        List<String> playlistOwners = new ArrayList<>();
-        List<String> playlistInfo = new ArrayList<>();
+        List<PlaylistItem> playlistItems = new ArrayList<>();
         for (PlaylistSimple playlist : playlists) {
-            playlistNames.add(playlist.name);
-            playlistOwners.add(playlist.owner.id);
             int playlistDurationInMins = getPlaylistLengthInMins(playlist);
-            playlistInfo.add(playlist.tracks.total + "songs, " + (playlistDurationInMins / 60)
-                    + "hr " + (playlistDurationInMins % 60) + "min");
+            String playlistCreatorInfo = "Created by: " + playlist.owner.id;
+            String playlistInfo = playlist.tracks.total + " songs, " + (playlistDurationInMins / 60)
+                    + " hr " + (playlistDurationInMins % 60) + " min";
+            String playlistImage = playlist.images.get(0).url;
+            playlistItems.add(new PlaylistItem(playlist.name, playlistCreatorInfo, playlistInfo, playlistImage));
         }
 
-        ArrayAdapter playlistNamesAdapter = new ArrayAdapter<>(this,
-                R.layout.select_playlist_list_item, R.id.tv_playlist_name, playlistNames);
-        ArrayAdapter playlistOwnersAdapter = new ArrayAdapter<>(this,
-                R.layout.select_playlist_list_item, R.id.tv_playlist_owner, playlistOwners);
-        ArrayAdapter playlistInfoAdapter = new ArrayAdapter<>(this,
-                R.layout.select_playlist_list_item, R.id.tv_playlist_info, playlistInfo);
+        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, playlistItems);
 
-        roomList.setAdapter(playlistNamesAdapter);
-        roomList.setAdapter(playlistOwnersAdapter);
-        roomList.setAdapter(playlistInfoAdapter);
+        roomList.setAdapter(playlistAdapter);
     }
 
     private int getPlaylistLengthInMins(PlaylistSimple playlist) {
-        List<PlaylistTrack> playlistTracks = getPlaylistTracks(playlists.get(chosenPlaylistPos));
+        List<PlaylistTrack> playlistTracks = getPlaylistTracks(playlist);
         int length = 0;
 
         for (PlaylistTrack playlistTrack : playlistTracks) {

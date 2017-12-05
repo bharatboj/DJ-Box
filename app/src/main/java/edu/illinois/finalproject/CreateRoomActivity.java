@@ -64,8 +64,8 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     public void onPrivateClicked(View view) {
         privateButton.setChecked(true);
-        publicButton.setChecked(false);
         passwordEditText.setEnabled(true);
+        publicButton.setChecked(false);
     }
 
     public void onPublicClicked(View view) {

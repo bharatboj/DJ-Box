@@ -7,21 +7,62 @@
     android:orientation="vertical"
     android:background="#333333">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/welcome_text"
-        android:textSize="20sp"
-        android:textColor="#999999"
-        android:layout_margin="30dp" />
+</LinearLayout>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:gravity="center_horizontal"
+android:orientation="vertical"
+android:padding="25dp"
+android:background="#333333">
 
-    <TextView
-        android:layout_width="wrap_content"
+<TextView
+    style="?android:listSeparatorTextViewStyle"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginTop="5dp"
+    android:background="#999999" />
+
+<TextView
+    android:id="@+id/tv_rooms"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/queue"
+    android:textSize="20sp"
+    android:textColor="#999999" />
+
+<TextView
+    style="?android:listSeparatorTextViewStyle"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginTop="5dp"
+    android:background="#999999" />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/lv_playlist_songs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:divider="#777777"
+        android:dividerHeight="1sp" />
+
+    <Button
+        android:id="@+id/b_logout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_to_the_audience_user_interface"
-        android:textSize="18sp"
-        android:textColor="#999999"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp" />
+        android:layout_weight="0"
+        android:text="@string/log_out"
+        android:onClick="onLogOutButtonClicked" />
+</LinearLayout>
 
 </LinearLayout>

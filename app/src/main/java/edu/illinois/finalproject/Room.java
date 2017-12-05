@@ -1,29 +1,18 @@
 package edu.illinois.finalproject;
 
 public class Room {
-    private String access;
-    private String dj;
+    private String Access;
+    private String DJ;
     private String Name;
-    private Double latitude;
-    private Double longitude;
-
-    Room() {
-    }
-
-    Room(String access, String dj, String name, Double latitude, Double longitude) {
-        this.access = access;
-        this.dj = dj;
-        this.Name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
+    private Double Latitude;
+    private Double Longitude;
 
     public String getAccess() {
-        return access;
+        return Access;
     }
 
-    public String getDj() {
-        return dj;
+    public String getDJ() {
+        return DJ;
     }
 
     public String getName() {
@@ -31,10 +20,10 @@ public class Room {
     }
 
     public Double getLatitude() {
-        return latitude;
+        return Latitude;
     }
 
     public Double getLongitude() {
-        return longitude;
+        return Longitude;
     }
 }

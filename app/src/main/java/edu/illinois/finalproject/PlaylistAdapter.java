@@ -38,8 +38,7 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistItem> {
                     .inflate(R.layout.playlist_item, parent, false);
         }
 
-        PlaylistViewHolder viewHolder;
-        viewHolder = new PlaylistViewHolder();
+        PlaylistViewHolder viewHolder = new PlaylistViewHolder();
         viewHolder.nameTextView = (TextView) itemView.findViewById(R.id.tv_playlist_name);
         viewHolder.ownerTextView = (TextView) itemView.findViewById(R.id.tv_playlist_owner);
         viewHolder.infoTextView = (TextView) itemView.findViewById(R.id.tv_playlist_info);
@@ -57,8 +56,7 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistItem> {
 
         // load playlist image into PlaylistImageView only if playlist contains image,
         // else loads a default image Spotify normally uses
-        String imageUrl = playlist.getImageUrl();
-        Picasso.with(itemView.getContext())
-                .load(imageUrl).into(viewHolder.playlistImageView);
+        Picasso.with(itemView.getContext()).load(playlist.getImageUrl())
+                .into(viewHolder.playlistImageView);
     }
 }

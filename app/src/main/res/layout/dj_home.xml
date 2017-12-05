@@ -47,7 +47,7 @@
             android:dividerHeight="1sp" />
 
         <Button
-            android:id="@+id/b_choose_playlist"
+            android:id="@+id/b_logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"

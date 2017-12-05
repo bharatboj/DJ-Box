@@ -18,12 +18,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:fullBackupContent="true"
+        android:configChanges="keyboardHidden|keyboard|orientation|screenSize"
         android:theme="@style/AppTheme">
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
         <activity
-            android:name=".MainSignInActivity"
-            android:configChanges="keyboardHidden|keyboard|orientation|screenSize">
+            android:name=".MainSignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />

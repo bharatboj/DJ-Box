@@ -1,6 +1,7 @@
 package edu.illinois.finalproject;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,15 +45,31 @@ public class AudienceSongAdapter extends ArrayAdapter<SongItem> {
         viewHolder.songImageView = (ImageView) itemView.findViewById(R.id.iv_song_aud);
         viewHolder.likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite_aud);
 
-        populateViews(viewHolder, itemView, song);
+        populateViews(viewHolder, pos, itemView, song);
 
         return itemView;
     }
 
-    private void populateViews(AudienceSongViewHolder viewHolder, View itemView, SongItem song) {
+    private void populateViews(AudienceSongViewHolder viewHolder, int pos, View itemView, SongItem song) {
         viewHolder.nameTextView.setText(song.getName());
         viewHolder.artistsTextView.setText(song.getArtists());
         viewHolder.numLikesTextView.setText(String.valueOf(song.getNumLikes()));
+
+        if (pos == 0) {
+            itemView.setBackgroundColor(Color.rgb(188, 207, 221));
+            viewHolder.nameTextView.setTextColor(Color.BLACK);
+            viewHolder.artistsTextView.setTextColor(Color.BLACK);
+            viewHolder.numLikesTextView.setTextColor(Color.BLACK);
+            viewHolder.songImageView.clearColorFilter();
+            itemView.setAlpha(0.7f);
+            viewHolder.likeButton.setAlpha(1.0f);
+        } else {
+            itemView.setBackgroundColor(Color.rgb(51, 51, 51));
+            viewHolder.nameTextView.setTextColor(Color.rgb(153, 153, 153));
+            viewHolder.artistsTextView.setTextColor(Color.rgb(153, 153, 153));
+            viewHolder.numLikesTextView.setTextColor(Color.rgb(153, 153, 153));
+            itemView.setAlpha(1.0f);
+        }
 
         // load playlist image into PlaylistImageView only if playlist contains image,
         // else loads a default image Spotify normally uses

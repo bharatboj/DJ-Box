@@ -35,4 +35,6 @@
     <string name="song_name">Song Name</string>
     <string name="artist_names">Artist Names</string>
     <string name="min_sec">min:sec</string>
+    <string name="selected_room_name">Selected Room Name</string>
+    <string name="settings">Settings</string>
 </resources>

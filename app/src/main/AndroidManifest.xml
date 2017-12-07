@@ -33,7 +33,7 @@
         </activity>
         <activity
             android:name=".AudienceHomeActivity"
-            android:label="@string/room_name"></activity>
+            android:label="@string/selected_room_name"></activity>
         <activity
             android:name=".DJHomeActivity"
             android:label="DJ Home"></activity>

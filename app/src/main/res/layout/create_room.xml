@@ -47,7 +47,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onPublicClicked"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp">
@@ -55,11 +54,13 @@
         <RadioButton
             android:id="@+id/rb_public"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:onClick="onPublicClicked" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onPublicClicked"
             android:text="Public"
             android:textColor="#999999" />
     </LinearLayout>
@@ -67,7 +68,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onPrivateClicked"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
@@ -77,12 +77,14 @@
             android:id="@+id/rb_private"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onPrivateClicked"
             android:textColor="#999999"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/private_password_protected"
+            android:onClick="onPrivateClicked"
             android:textColor="#999999" />
     </LinearLayout>
 
@@ -104,12 +106,14 @@
             android:id="@+id/et_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
             android:textSize="12sp"
             android:enabled="false"
             android:hint="@string/enter_password"
             android:inputType="text"
             android:textColorHint="#555555"
-            android:background="#999" />
+            android:background="#999"
+            android:layout_marginStart="5dp" />
     </LinearLayout>
 
     <Button

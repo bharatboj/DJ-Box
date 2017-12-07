@@ -14,6 +14,10 @@ import static edu.illinois.finalproject.DJBoxUtils.roomsRef;
 
 public class JoinRoomActivity extends AppCompatActivity {
 
+    private ListView roomList;
+    private static int chosenRoomPos;
+    private static String chosenRoomID;
+
     /**
      * This function sets up the activity
      *
@@ -25,13 +29,13 @@ public class JoinRoomActivity extends AppCompatActivity {
         setContentView(R.layout.join_room);
 
         roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
+        roomList = (ListView) findViewById(R.id.lv_join_room_list);
 
         displayListOfRooms();
+        recordChosenRoomOnClick();
     }
 
     private void displayListOfRooms() {
-        final ListView roomList = (ListView) findViewById(R.id.lv_join_room_list);
-
         FirebaseListAdapter roomAdapter = new FirebaseListAdapter<Room>
                 (this, Room.class, R.layout.join_room_list_item, roomsRef) {
 
@@ -45,7 +49,33 @@ public class JoinRoomActivity extends AppCompatActivity {
         roomList.setAdapter(roomAdapter);
     }
 
+    public void recordChosenRoomOnClick() {
+        roomList.setOnItemClickListener((adapterView, playlistView, pos, id) -> chosenRoomPos = pos);
+
+//        FirebaseDatabase.getInstance().getReference("Rooms")
+//                .addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot roomSnapshot) {
+//                        int pos = chosenRoomPos;
+//                        Iterator<DataSnapshot> roomsIDsIterables = roomSnapshot.getChildren().iterator();
+//                        chosenRoomID = roomsIDsIterables.next().getKey();
+//                        while(pos > 0) {
+//                            chosenRoomID = roomsIDsIterables.next().getKey();
+//                            pos--;
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                    }
+//                });
+    }
+
     public void onJoinButtonPressed(View view) {
         openActivity(this, AudienceHomeActivity.class);
+    }
+
+    public static String getChosenRoomID() {
+        return chosenRoomID;
     }
 }

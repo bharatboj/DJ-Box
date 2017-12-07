@@ -18,7 +18,6 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 import static edu.illinois.finalproject.DJBoxUtils.openActivity;
-import static edu.illinois.finalproject.DJBoxUtils.roomsRef;
 
 public class SelectPlaylistActivity extends AppCompatActivity {
 
@@ -37,7 +36,6 @@ public class SelectPlaylistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_playlist);
 
-        roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
         playlistList = (ListView) findViewById(R.id.lv_playlists_list);
         playlists = new ArrayList<>();
 

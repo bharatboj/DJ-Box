@@ -34,7 +34,6 @@ import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
 class DJBoxUtils extends AppCompatActivity {
 
     static Map<Track, Integer> songs;
-    static String roomID;
 
     /**
      * This function allows user to open an Activity from a different Activity
@@ -300,12 +299,13 @@ class DJBoxUtils extends AppCompatActivity {
                 .map(DataSnapshot::getKey).toArray(String[]::new);
     }
 
-    private void updateSongs(ListView listView, User userType) {
+    static void updateSongs(ListView listView, User userType, Context context) {
+        songs = new HashMap<>();
         String roomID = "R5";
         DatabaseReference roomRef = FirebaseDatabase.getInstance()
-                .getReference("Rooms").child(roomID);
+                .getReference("Rooms").child(roomID).child("Playlist");
 
-        roomRef.child("Playlist").addValueEventListener(new ValueEventListener() {
+        roomRef.addValueEventListener(new ValueEventListener() {
             @TargetApi(Build.VERSION_CODES.N)
             @Override
             public void onDataChange(DataSnapshot roomSnapshot) {
@@ -318,7 +318,7 @@ class DJBoxUtils extends AppCompatActivity {
                         , false).forEach(trackID -> songs.put(spotify.getTrack(trackID.getValue(String.class))
                         , getNumLikesForSong(roomSnapshot, trackID.getValue(String.class))));
 
-                displaySongs();
+                displaySongs(listView, userType, context);
             }
 
             @Override
@@ -327,7 +327,7 @@ class DJBoxUtils extends AppCompatActivity {
         });
     }
 
-    private void displaySongs(ListView listView, User userType) {
+    private static void displaySongs(ListView listView, User userType, Context context) {
         List<SongItem> songItems = new ArrayList<>();
         for (Track track : songs.keySet()) {
             songItems.add(new SongItem(track.id, track.name, getArtistsAsString(track.artists)
@@ -336,16 +336,16 @@ class DJBoxUtils extends AppCompatActivity {
         }
 
         ArrayAdapter<SongItem> songAdapter;
-        if (userType == User.DISC_JOCKEY) {
-            songAdapter = new DJSongAdapter(this, songItems);
-        } else {
-            songAdapter = new AudienceSongAdapter(this, songItems);
+        if (userType == User.DISC_JOCKEY)
+            songAdapter = new DJSongAdapter(context, songItems);
+        else {
+            songAdapter = new AudienceSongAdapter(context, songItems);
         }
 
         listView.setAdapter(songAdapter);
     }
 
-    private String getArtistsAsString(List<ArtistSimple> artistList) {
+    private static String getArtistsAsString(List<ArtistSimple> artistList) {
         StringBuilder str = new StringBuilder();
 
         for (ArtistSimple artist : artistList) {
@@ -356,14 +356,14 @@ class DJBoxUtils extends AppCompatActivity {
         return str.toString();
     }
 
-    private int getNumLikesForSong(DataSnapshot roomSnapshot, String trackID) {
+    private static int getNumLikesForSong(DataSnapshot roomSnapshot, String trackID) {
         return (int) roomSnapshot.child("Songs").child(trackID).getChildrenCount();
     }
 
-    private String getDurationAsString(long durationMs) {
+    private static String getDurationAsString(long durationMs) {
         int durationInMins = (int) durationMs / 60000;
         int durationInSecs = (int) durationMs % 60000 / 1000;
 
-        return durationInMins + ":" + durationInSecs;
+        return durationInMins + ":" + ((durationInSecs < 10) ? ("0" + durationInSecs) : durationInSecs);
     }
 }

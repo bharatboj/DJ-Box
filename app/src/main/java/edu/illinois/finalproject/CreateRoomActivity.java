@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
@@ -38,14 +39,21 @@ public class CreateRoomActivity extends AppCompatActivity {
         passwordEditText = (EditText) findViewById(R.id.et_password);
     }
 
+    /**
+     * Updates Firebase with information containing all attributes of new room
+     *
+     * @param view      View object holding the "Create" Button
+     */
     public void onCreateButtonClicked(View view) {
-        String roomID = "R5";
+        // initialize all room attributes to their respective variables
+        String roomID = getNewRoomID();
         String djID = getSpotifyService().getMe().id;
         String roomName = roomNameEditText.getText().toString();
         String pass = passwordEditText.getText().toString();
-        double latitude = 40.116;
-        double longitude = 88.243;
+        double latitude = 12.221;
+        double longitude = 43.444;
 
+        // using a Map object that will contain all the attributes for the room
         Map<String, Object> roomVals = new HashMap<>();
 
         roomVals.put("dj", djID);
@@ -65,16 +73,42 @@ public class CreateRoomActivity extends AppCompatActivity {
         FirebaseDatabase.getInstance().getReference("Rooms")
                 .child(roomID).updateChildren(roomVals);
 
+        // allow user to select playlist next
         openActivity(CreateRoomActivity.this, SelectPlaylistActivity.class);
     }
 
+    /**
+     * Returns a unique roomID not within Firebase list of roomIDs
+     *
+     * @return a unique roomID not within Firebase list of roomIDs
+     */
+    private String getNewRoomID() {
+        DatabaseReference roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
+
+        // returns a unique roomID not within Firebase list of roomIDs
+        return roomsRef.push().getKey();
+    }
+
+    /**
+     * Programatically allows user to click the Private RadioButton
+     *
+     * @param view      View object that is clicked
+     */
     public void onPrivateClicked(View view) {
+        // Checks Private button on click and allows user to type password for room and
+        // unchecks Public button
         privateButton.setChecked(true);
         passwordEditText.setEnabled(true);
         publicButton.setChecked(false);
     }
 
+    /**
+     * Programatically allows user to click the Public RadioButton
+     *
+     * @param view      View object that is clicked
+     */
     public void onPublicClicked(View view) {
+        // Checks Public button on click and unchecks Private button
         publicButton.setChecked(true);
         privateButton.setChecked(false);
         passwordEditText.setEnabled(false);

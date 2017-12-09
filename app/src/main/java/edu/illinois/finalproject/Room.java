@@ -1,6 +1,5 @@
 package edu.illinois.finalproject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +8,7 @@ class Room {
     private String dj;
     private Map<String, List<String>> likes;
     private String name;
-    private ArrayList<String> playlist;
+    private List<String> playlist;
     private Double latitude;
     private Double longitude;
 
@@ -18,7 +17,7 @@ class Room {
     }
 
     public Room(String access, String dj, Map<String, List<String>> likes, String name
-            , ArrayList<String> playlist, Double latitude, Double longitude) {
+            , List<String> playlist, Double latitude, Double longitude) {
         this.access = access;
         this.dj = dj;
         this.likes = likes;
@@ -44,7 +43,7 @@ class Room {
         return name;
     }
 
-    public ArrayList<String> getPlaylist() {
+    public List<String> getPlaylist() {
         return playlist;
     }
 
@@ -55,4 +54,5 @@ class Room {
     public Double getLongitude() {
         return longitude;
     }
+
 }

@@ -36,12 +36,13 @@ public class JoinRoomActivity extends AppCompatActivity {
     }
 
     private void displayListOfRooms() {
-        FirebaseListAdapter roomAdapter = new FirebaseListAdapter<Rooms>
-                (this, Rooms.class, R.layout.join_room_list_item, roomsRef) {
+        FirebaseListAdapter roomAdapter = new FirebaseListAdapter<Room>
+                (this, Room.class, R.layout.join_room_list_item, roomsRef) {
 
             @Override
-            protected void populateView(View view, Rooms model, int position) {
+            protected void populateView(View view, Room model, int position) {
                 TextView nameTextView = (TextView) view.findViewById(R.id.tv_room_name);
+
                 nameTextView.setText(model.getName());
             }
         };

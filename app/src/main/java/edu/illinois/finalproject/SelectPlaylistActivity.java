@@ -97,7 +97,7 @@ public class SelectPlaylistActivity extends AppCompatActivity {
 
         // add a playlist containing the songIDs
         FirebaseDatabase.getInstance().getReference("Rooms")
-                .child(roomID).child("Playlist").updateChildren(playlistSongIDs);
+                .child(roomID).child("playlist").updateChildren(playlistSongIDs);
 
         openActivity(this, DJHomeActivity.class);
     }

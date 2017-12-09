@@ -46,7 +46,7 @@ public class CreateRoomActivity extends AppCompatActivity {
      */
     public void onCreateButtonClicked(View view) {
         // initialize all room attributes to their respective variables
-        String roomID = getNewRoomID();
+        String roomID = "R5";
         String djID = getSpotifyService().getMe().id;
         String roomName = roomNameEditText.getText().toString();
         String pass = passwordEditText.getText().toString();
@@ -58,8 +58,8 @@ public class CreateRoomActivity extends AppCompatActivity {
 
         roomVals.put("dj", djID);
         roomVals.put("name", roomName);
-        roomVals.put("lat", latitude);
-        roomVals.put("long", longitude);
+        roomVals.put("latitude", latitude);
+        roomVals.put("longitude", longitude);
 
         // if a password exists, then access is set to private, else we know it's public
         if (passwordEditText.isEnabled()) {

@@ -2,21 +2,21 @@ package edu.illinois.finalproject;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
-import static edu.illinois.finalproject.DJBoxUtils.openActivity;
+import java.util.Hashtable;
+
 import static edu.illinois.finalproject.DJBoxUtils.roomsRef;
 
 public class JoinRoomActivity extends AppCompatActivity {
 
     private ListView roomList;
-    private static int chosenRoomPos;
-    private static String chosenRoomID;
+    private Hashtable<String, Room> rooms;
 
     /**
      * This function sets up the activity
@@ -30,53 +30,46 @@ public class JoinRoomActivity extends AppCompatActivity {
 
         roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
         roomList = (ListView) findViewById(R.id.lv_join_room_list);
+        rooms = new Hashtable<>();
 
         displayListOfRooms();
-        recordChosenRoomOnClick();
     }
 
     private void displayListOfRooms() {
-        FirebaseListAdapter roomAdapter = new FirebaseListAdapter<Room>
-                (this, Room.class, R.layout.join_room_list_item, roomsRef) {
+        roomsRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                updateRoom(dataSnapshot);
+            }
 
             @Override
-            protected void populateView(View view, Room model, int position) {
-                TextView nameTextView = (TextView) view.findViewById(R.id.tv_room_name);
-
-                nameTextView.setText(model.getName());
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                updateRoom(dataSnapshot);
             }
-        };
 
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+    }
+
+    private void updateRoom(DataSnapshot roomSnap) {
+        String roomID = roomSnap.getKey();
+        Room room = roomSnap.getValue(Room.class);
+
+        rooms.put(roomID, room);
+
+        RoomAdapter roomAdapter = new RoomAdapter(JoinRoomActivity.this, rooms);
         roomList.setAdapter(roomAdapter);
     }
 
-    public void recordChosenRoomOnClick() {
-        roomList.setOnItemClickListener((adapterView, playlistView, pos, id) -> chosenRoomPos = pos);
-
-//        FirebaseDatabase.getInstance().getReference("Rooms")
-//                .addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot roomSnapshot) {
-//                        int pos = chosenRoomPos;
-//                        Iterator<DataSnapshot> roomsIDsIterables = roomSnapshot.getChildren().iterator();
-//                        chosenRoomID = roomsIDsIterables.next().getKey();
-//                        while(pos > 0) {
-//                            chosenRoomID = roomsIDsIterables.next().getKey();
-//                            pos--;
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                    }
-//                });
-    }
-
-    public void onJoinButtonPressed(View view) {
-        openActivity(this, AudienceHomeActivity.class);
-    }
-
-    public static String getChosenRoomID() {
-        return chosenRoomID;
-    }
 }

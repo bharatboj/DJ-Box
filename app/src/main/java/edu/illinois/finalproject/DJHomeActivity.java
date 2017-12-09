@@ -22,7 +22,6 @@ public class DJHomeActivity extends AppCompatActivity {
 
         ListView songsList = (ListView) findViewById(R.id.lv_playlist_songs);
 
-        DJBoxUtils.updateSongs(songsList, User.DISC_JOCKEY, this);
     }
 
     /**

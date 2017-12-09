@@ -299,36 +299,52 @@ class DJBoxUtils extends AppCompatActivity {
                 .map(DataSnapshot::getKey).toArray(String[]::new);
     }
 
-    static void updateSongs(ListView listView, User userType, Context context) {
-        songs = new HashMap<>();
-        String roomID = "R5";
-        DatabaseReference roomRef = FirebaseDatabase.getInstance()
-                .getReference("Rooms").child(roomID).child("Playlist");
+//    static void updateSongs(ListView listView, User userType, Context context) {
+//
+////                for (DataSnapshot trackSnap : roomSnapshot.child("Playlist").getChildren()) {
+////                    String trackID = trackSnap.getValue(String.class);
+////                    Track track = spotify.getTrack(trackID);
+////                    int numLikesForTrack = getNumLikesForSong(roomSnapshot, trackID);
+////                    songs.put(track, numLikesForTrack);
+//
+//        songs = new HashMap<>();
+//
+//        roomRef.addValueEventListener(new ValueEventListener() {
+//            @TargetApi(Build.VERSION_CODES.N)
+//            @Override
+//            public void onDataChange(DataSnapshot roomSnapshot) {
+//                SpotifyService spotify = getSpotifyService();
+//
+//                // Searches each trackID in Iterable snapshot, gets associated Spotify Track for it,
+//                // and creates a list of type Track containing each of these tracks
+//
+//                StreamSupport.stream(roomSnapshot.getChildren().spliterator()
+//                        , false).forEach(trackID -> songs.put(spotify.getTrack(trackID.getValue(String.class))
+//                        , getNumLikesForSong(roomSnapshot, trackID.getValue(String.class))));
+//
+//                songs.put(spotify.getTrack("4bMIRaesSZwIldFWCGs96S"), 0);
+//                songs.put(spotify.getTrack("6vtLtrPHZAo5OUy1Sk9BTH"), 0);
+//                songs.put(spotify.getTrack("3CVPyuuD6HxWXgPbbGqbg6"), 0);
+//                songs.put(spotify.getTrack("4PZzEAYfBb26M5Fhm8xbZd"), 0);
+//                songs.put(spotify.getTrack("1C50sKrPuWp8mkSC0GA6DW"), 0);
+//                songs.put(spotify.getTrack("7mlJpcVvVRzgGwkL3GUgY3"), 0);
+//                songs.put(spotify.getTrack("1yzbqrSF0vuaO7nuKYSd6f"), 0);
+//                songs.put(spotify.getTrack("5JqXtvd8bAyyPTjaK6cSDH"), 0);
+//                songs.put(spotify.getTrack("1vcAHEXL5Cl9TUk0ESvWnN"), 0);
+//                songs.put(spotify.getTrack("7q8jJ1XZEliBakZSUMFde5"), 0);
+//
+//                displaySongs(listView, userType, context);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
+//    }
 
-        roomRef.addValueEventListener(new ValueEventListener() {
-            @TargetApi(Build.VERSION_CODES.N)
-            @Override
-            public void onDataChange(DataSnapshot roomSnapshot) {
-                SpotifyService spotify = getSpotifyService();
-
-                // Searches each trackID in Iterable snapshot, gets associated Spotify Track for it,
-                // and creates a list of type Track containing each of these tracks
-
-                StreamSupport.stream(roomSnapshot.getChildren().spliterator()
-                        , false).forEach(trackID -> songs.put(spotify.getTrack(trackID.getValue(String.class))
-                        , getNumLikesForSong(roomSnapshot, trackID.getValue(String.class))));
-
-                displaySongs(listView, userType, context);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private static void displaySongs(ListView listView, User userType, Context context) {
+    static void displaySongs(ListView listView, User userType, Context context) {
         List<SongItem> songItems = new ArrayList<>();
+
         for (Track track : songs.keySet()) {
             songItems.add(new SongItem(track.id, track.name, getArtistsAsString(track.artists)
                     , getDurationAsString(track.duration_ms), songs.get(track)
@@ -345,7 +361,7 @@ class DJBoxUtils extends AppCompatActivity {
         listView.setAdapter(songAdapter);
     }
 
-    private static String getArtistsAsString(List<ArtistSimple> artistList) {
+    static String getArtistsAsString(List<ArtistSimple> artistList) {
         StringBuilder str = new StringBuilder();
 
         for (ArtistSimple artist : artistList) {
@@ -360,7 +376,7 @@ class DJBoxUtils extends AppCompatActivity {
         return (int) roomSnapshot.child("Songs").child(trackID).getChildrenCount();
     }
 
-    private static String getDurationAsString(long durationMs) {
+    static String getDurationAsString(long durationMs) {
         int durationInMins = (int) durationMs / 60000;
         int durationInSecs = (int) durationMs % 60000 / 1000;
 

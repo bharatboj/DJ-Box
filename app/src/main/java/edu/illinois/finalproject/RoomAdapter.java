@@ -1,6 +1,8 @@
 package edu.illinois.finalproject;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class RoomAdapter extends ArrayAdapter<Room> {
     /**
@@ -24,8 +27,8 @@ public class RoomAdapter extends ArrayAdapter<Room> {
      * @param context   Context object that holds context of calling Activity
      * @param rooms     List<Room> object that contains list of Room objects
      */
-    RoomAdapter(Context context, List<Room> rooms) {
-        super(context, R.layout.join_room_list_item, rooms);
+    RoomAdapter(Context context, Hashtable<String, Room> rooms) {
+        super(context, R.layout.join_room_list_item, new ArrayList<>(rooms.values()));
     }
 
     /**
@@ -50,6 +53,7 @@ public class RoomAdapter extends ArrayAdapter<Room> {
         viewHolder.nameTextView = (TextView) itemView.findViewById(R.id.tv_room_name);
 
         populateViews(viewHolder, room);
+        openAudienceHomeOnClick(itemView, room);
 
         return itemView;
     }
@@ -62,6 +66,21 @@ public class RoomAdapter extends ArrayAdapter<Room> {
      */
     private void populateViews(RoomViewHolder viewHolder, Room room) {
         viewHolder.nameTextView.setText(room.getName());
+    }
+
+    private void openAudienceHomeOnClick(final View itemView, final Room room) {
+        itemView.setOnClickListener(view -> {
+            final Context context = view.getContext();
+            Intent audienceHomeIntent = new Intent(context, AudienceHomeActivity.class);
+            audienceHomeIntent.putExtra("room", room);
+            context.startActivity(audienceHomeIntent);
+        });
+    }
+
+    private void passParcelableOnChange(final View itemView, Room room) {
+        final Context context = itemView.getContext();
+        Intent audienceHomeIntent = new Intent(context, AudienceHomeActivity.class);
+        audienceHomeIntent.putExtra("room", (Parcelable) room);
     }
 
 }

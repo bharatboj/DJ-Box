@@ -1,6 +1,7 @@
 package edu.illinois.finalproject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,7 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistItem> {
 
     @NonNull
     @Override
-    public View getView(int pos, View itemView, ViewGroup parent) {
+    public View getView(int pos, View itemView, @NonNull ViewGroup parent) {
         PlaylistItem playlist = getItem(pos);
 
         if (itemView == null) {
@@ -58,5 +59,14 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistItem> {
         // else loads a default image Spotify normally uses
         Picasso.with(itemView.getContext()).load(playlist.getImageUrl())
                 .into(viewHolder.playlistImageView);
+    }
+
+    private void openAudienceHomeOnClick(final View itemView, final PlaylistItem playlist) {
+        itemView.setOnClickListener(view -> {
+            final Context context = view.getContext();
+            Intent djHomeIntent = new Intent(context, DJHomeActivity.class);
+            djHomeIntent.putExtra("playlist", playlist);
+            context.startActivity(djHomeIntent);
+        });
     }
 }

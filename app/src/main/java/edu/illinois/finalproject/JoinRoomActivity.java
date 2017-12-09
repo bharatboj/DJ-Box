@@ -9,14 +9,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.List;
 
 import static edu.illinois.finalproject.DJBoxUtils.roomsRef;
 
 public class JoinRoomActivity extends AppCompatActivity {
 
     private ListView roomList;
-    private Hashtable<String, Room> rooms;
+    private List<Room> rooms;
 
     /**
      * This function sets up the activity
@@ -30,7 +31,7 @@ public class JoinRoomActivity extends AppCompatActivity {
 
         roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
         roomList = (ListView) findViewById(R.id.lv_join_room_list);
-        rooms = new Hashtable<>();
+        rooms = new ArrayList<>();
 
         displayListOfRooms();
     }
@@ -63,12 +64,11 @@ public class JoinRoomActivity extends AppCompatActivity {
     }
 
     private void updateRoom(DataSnapshot roomSnap) {
-        String roomID = roomSnap.getKey();
         Room room = roomSnap.getValue(Room.class);
 
-        rooms.put(roomID, room);
+        rooms.add(room);
 
-        RoomAdapter roomAdapter = new RoomAdapter(JoinRoomActivity.this, rooms);
+        RoomAdapter roomAdapter = new RoomAdapter(this, rooms);
         roomList.setAdapter(roomAdapter);
     }
 

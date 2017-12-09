@@ -51,7 +51,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:text="@string/join"
-            android:onClick="onJoinButtonPressed"
             android:background="@color/lightGreen" />
     </LinearLayout>
 

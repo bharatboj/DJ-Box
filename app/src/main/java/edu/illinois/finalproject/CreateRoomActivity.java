@@ -1,5 +1,7 @@
 package edu.illinois.finalproject;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
-import static edu.illinois.finalproject.DJBoxUtils.openActivity;
 
 public class CreateRoomActivity extends AppCompatActivity {
 
@@ -46,7 +47,7 @@ public class CreateRoomActivity extends AppCompatActivity {
      */
     public void onCreateButtonClicked(View view) {
         // initialize all room attributes to their respective variables
-        String roomID = "R5";
+        String roomID = getNewRoomID();
         String djID = getSpotifyService().getMe().id;
         String roomName = roomNameEditText.getText().toString();
         String pass = passwordEditText.getText().toString();
@@ -74,7 +75,11 @@ public class CreateRoomActivity extends AppCompatActivity {
                 .child(roomID).updateChildren(roomVals);
 
         // allow user to select playlist next
-        openActivity(CreateRoomActivity.this, SelectPlaylistActivity.class);
+        // opens SelectPlaylist screen
+        final Context context = view.getContext();
+        Intent audienceHomeIntent = new Intent(context, SelectPlaylistActivity.class);
+        audienceHomeIntent.putExtra("roomID", roomID);
+        context.startActivity(audienceHomeIntent);
     }
 
     /**

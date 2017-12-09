@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
@@ -39,30 +40,22 @@ public class SelectPlaylistActivity extends AppCompatActivity {
         playlistList = (ListView) findViewById(R.id.lv_playlists_list);
         playlists = new ArrayList<>();
 
-        setPlaylists();
         displayPlaylists();
-        recordPlaylistOnClick();
-    }
-
-    private void setPlaylists() {
-        SpotifyService spotify = getSpotifyService();
-        List<PlaylistSimple> playlistsList = spotify.getMyPlaylists().items;
-        for (PlaylistSimple playlist : playlistsList) {
-            if (playlist.tracks.total > 0) {
-                playlists.add(playlist);
-            }
-        }
     }
 
     private void displayPlaylists() {
+        SpotifyService spotify = getSpotifyService();
         List<PlaylistItem> playlistItems = new ArrayList<>();
-        for (PlaylistSimple playlist : playlists) {
-            int playlistDurationInMins = getPlaylistLengthInMins(playlist);
-            String playlistCreatorInfo = "Created by: " + playlist.owner.id;
-            String playlistInfo = playlist.tracks.total + " songs, " + (playlistDurationInMins / 60)
-                    + " hr " + (playlistDurationInMins % 60) + " min";
-            String playlistImage = playlist.images.get(0).url;
-            playlistItems.add(new PlaylistItem(playlist.name, playlistCreatorInfo, playlistInfo, playlistImage));
+        List<PlaylistSimple> playlistsList = spotify.getMyPlaylists().items;
+        for (PlaylistSimple playlist : playlistsList) {
+            if (playlist.tracks.total > 0) {
+                String playlistCreatorInfo = "Created by: " + playlist.owner.id;
+                int playlistDurationInMins = getPlaylistLengthInMins(playlist);
+                String playlistInfo = playlist.tracks.total + " songs, " +
+                        (playlistDurationInMins / 60) + " hr " + (playlistDurationInMins % 60) + " min";
+                String playlistImage = playlist.images.get(0).url;
+                playlistItems.add(new PlaylistItem(playlist.name, playlistCreatorInfo, playlistInfo, playlistImage));
+            }
         }
 
         PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, playlistItems);
@@ -81,23 +74,21 @@ public class SelectPlaylistActivity extends AppCompatActivity {
         return (int) Math.round(length / 60000.0);
     }
 
-    private void recordPlaylistOnClick() {
-        playlistList.setOnItemClickListener((adapterView, playlistView, pos, id) ->
-                chosenPlaylistPos = pos);
-    }
-
     public void addPlaylistOnceChosen(View view) {
-        String roomID = "R5";
-        List<PlaylistTrack> playlistTracks = getPlaylistTracks(playlists.get(chosenPlaylistPos));
+        String roomID = getIntent().getStringExtra("roomID");
+        List<PlaylistTrack> playlistTracks = new ArrayList<>();
 
+        // goes through each PlaylistTrack object in playlist and creates a Map:
+        // (track index -> track id)
         Map<String, Object> playlistSongIDs = new HashMap<>();
         for (int index = 0; index < playlistTracks.size(); index++) {
             playlistSongIDs.put(String.valueOf(index), playlistTracks.get(index).track.id);
         }
 
-        // add a playlist containing the songIDs
-        FirebaseDatabase.getInstance().getReference("Rooms")
-                .child(roomID).child("playlist").updateChildren(playlistSongIDs);
+        // add a playlist containing the songIDs in the respective room
+        DatabaseReference roomRef = FirebaseDatabase.getInstance().getReference("Rooms")
+                .child(roomID).child("playlist");
+        roomRef.updateChildren(playlistSongIDs);
 
         openActivity(this, DJHomeActivity.class);
     }
@@ -107,7 +98,6 @@ public class SelectPlaylistActivity extends AppCompatActivity {
         String playlistID = playlist.id;
 
         SpotifyService spotify = getSpotifyService();
-        List<PlaylistTrack> playlistTracks = new ArrayList<>();
 
         Map<String, Object> options = new HashMap<>();
         options.put(SpotifyService.LIMIT, 100);

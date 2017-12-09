@@ -21,11 +21,17 @@ public class CreateRoomActivity extends AppCompatActivity {
     RadioButton publicButton;
     EditText passwordEditText;
 
+    /**
+     * This function sets up the activity
+     *
+     * @param savedInstanceState a Bundle object containing the activity's previously saved state
+     */
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_room);
 
+        // initialize all Create Room screen views
         roomNameEditText = (EditText) findViewById(R.id.et_room_name);
         privateButton = (RadioButton) findViewById(R.id.rb_private);
         publicButton = (RadioButton) findViewById(R.id.rb_public);
@@ -42,17 +48,17 @@ public class CreateRoomActivity extends AppCompatActivity {
 
         Map<String, Object> roomVals = new HashMap<>();
 
-        roomVals.put("DJ", djID);
-        roomVals.put("Name", roomName);
+        roomVals.put("dj", djID);
+        roomVals.put("name", roomName);
         roomVals.put("lat", latitude);
         roomVals.put("long", longitude);
 
         // if a password exists, then access is set to private, else we know it's public
         if (passwordEditText.isEnabled()) {
-            roomVals.put("Access", "Private");
-            roomVals.put("Pass", pass);
+            roomVals.put("access", "Private");
+            roomVals.put("pass", pass);
         } else {
-            roomVals.put("Access", "Public");
+            roomVals.put("access", "Public");
         }
 
         // create a roomID with proper room values

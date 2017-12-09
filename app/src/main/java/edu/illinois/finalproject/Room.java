@@ -1,29 +1,58 @@
 package edu.illinois.finalproject;
 
-public class Room {
-    private String Access;
-    private String DJ;
-    private String Name;
-    private Double Latitude;
-    private Double Longitude;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-    public String getAccess() {
-        return Access;
+class Room {
+    private String access;
+    private String dj;
+    private Map<String, List<String>> likes;
+    private String name;
+    private ArrayList<String> playlist;
+    private Double latitude;
+    private Double longitude;
+
+    public Room() {
+
     }
 
-    public String getDJ() {
-        return DJ;
+    public Room(String access, String dj, Map<String, List<String>> likes, String name
+            , ArrayList<String> playlist, Double latitude, Double longitude) {
+        this.access = access;
+        this.dj = dj;
+        this.likes = likes;
+        this.name = name;
+        this.playlist = playlist;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public String getAccess() {
+        return access;
+    }
+
+    public String getDj() {
+        return dj;
+    }
+
+    public Map<String, List<String>> getLikes() {
+        return likes;
     }
 
     public String getName() {
-        return Name;
+        return name;
+    }
+
+    public ArrayList<String> getPlaylist() {
+        return playlist;
     }
 
     public Double getLatitude() {
-        return Latitude;
+        return latitude;
     }
 
     public Double getLongitude() {
-        return Longitude;
+        return longitude;
     }
 }

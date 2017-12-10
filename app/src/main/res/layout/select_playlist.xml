@@ -41,20 +41,10 @@
             android:id="@+id/lv_playlists_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="10dp"
             android:layout_weight="1"
             android:divider="#777777"
             android:dividerHeight="1sp"
             android:listSelector="#202020" />
-
-        <Button
-            android:id="@+id/b_choose_playlist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:onClick="addPlaylistOnceChosen"
-            android:background="@color/lightGreen"
-            android:text="@string/choose" />
     </LinearLayout>
 
 </LinearLayout>

@@ -15,7 +15,6 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 
 public class SelectPlaylistActivity extends AppCompatActivity {
-
     private ListView playlistList;
 
     List<PlaylistSimple> playlists;
@@ -54,7 +53,5 @@ public class SelectPlaylistActivity extends AppCompatActivity {
         PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, roomID, playlists);
         playlistList.setAdapter(playlistAdapter);
     }
-
-
 
 }

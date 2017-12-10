@@ -1,6 +1,6 @@
 package edu.illinois.finalproject;
 
-public class SongItem {
+public class SimpleTrack {
     private String id;
     private String name;
     private String artists;
@@ -8,7 +8,7 @@ public class SongItem {
     private int numLikes;
     private String imageUrl;
 
-    SongItem(String id, String name, String artists, String duration, int numLikes, String imageUrl) {
+    SimpleTrack(String id, String name, String artists, String duration, int numLikes, String imageUrl) {
         this.id = id;
         this.name = name;
         this.artists = artists;

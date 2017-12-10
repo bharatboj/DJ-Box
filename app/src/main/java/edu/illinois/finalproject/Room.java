@@ -10,7 +10,7 @@ import java.util.Map;
 class Room implements Parcelable {
     private String access;
     private String dj;
-    private Map<String, List<String>> likes;
+    private HashMap<String, List<String>> likes;
     private String name;
     private List<String> playlist;
     private Double latitude;
@@ -19,23 +19,7 @@ class Room implements Parcelable {
     public Room() {
     }
 
-    private Room(Parcel in) {
-        this.access = in.readString();
-        this.dj = in.readString();
-        int likesSize = in.readInt();
-        this.likes = new HashMap<>(likesSize);
-        for (int i = 0; i < likesSize; i++) {
-            String key = in.readString();
-            List<String> value = in.createStringArrayList();
-            this.likes.put(key, value);
-        }
-        this.name = in.readString();
-        this.playlist = in.createStringArrayList();
-        this.latitude = in.readDouble();
-        this.longitude = in.readDouble();
-    }
-
-    public Room(String access, String dj, Map<String, List<String>> likes, String name
+    public Room(String access, String dj, HashMap<String, List<String>> likes, String name
             , List<String> playlist, Double latitude, Double longitude) {
         this.access = access;
         this.dj = dj;
@@ -83,15 +67,21 @@ class Room implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.access);
         dest.writeString(this.dj);
-        dest.writeInt(this.likes.size());
-        for (Map.Entry<String, List<String>> entry : this.likes.entrySet()) {
-            dest.writeString(entry.getKey());
-            dest.writeStringList(entry.getValue());
-        }
+        dest.writeSerializable(this.likes);
         dest.writeString(this.name);
         dest.writeStringList(this.playlist);
-        dest.writeDouble(this.latitude);
-        dest.writeDouble(this.longitude);
+        dest.writeValue(this.latitude);
+        dest.writeValue(this.longitude);
+    }
+
+    protected Room(Parcel in) {
+        this.access = in.readString();
+        this.dj = in.readString();
+        this.likes = (HashMap<String, List<String>>) in.readSerializable();
+        this.name = in.readString();
+        this.playlist = in.createStringArrayList();
+        this.latitude = (Double) in.readValue(Double.class.getClassLoader());
+        this.longitude = (Double) in.readValue(Double.class.getClassLoader());
     }
 
     public static final Creator<Room> CREATOR = new Creator<Room>() {

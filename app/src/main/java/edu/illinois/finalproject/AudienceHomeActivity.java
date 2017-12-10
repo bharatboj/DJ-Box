@@ -1,26 +1,21 @@
 package edu.illinois.finalproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Track;
-
-import static edu.illinois.finalproject.DJBoxUtils.getArtistsAsString;
-import static edu.illinois.finalproject.DJBoxUtils.getDurationAsString;
-import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 
 public class AudienceHomeActivity extends AppCompatActivity {
 
     private ListView songsList;
-    private DatabaseReference roomsRef;
 
     /**
      * This function sets up the activity
@@ -33,33 +28,49 @@ public class AudienceHomeActivity extends AppCompatActivity {
         setContentView(R.layout.audience_home);
 
         // gets Room that was passed through the intent
-        Room room = getIntent().getParcelableExtra("room");
+        Intent intent = getIntent();
+        Room room = intent.getParcelableExtra("room");
+        String roomID = intent.getStringExtra("roomID");
 
         songsList = (ListView) findViewById(R.id.lv_playlist_songs_aud);
 
-        updateSongs(songsList, room.getPlaylist());
+        displaySongs(roomID);
     }
 
-    private void updateSongs(ListView songsList, List<String> trackIDs) {
-        SpotifyService spotify = getSpotifyService();
-        List<Track> tracks = new ArrayList<>();
+    private void displaySongs(String roomID) {
+        DatabaseReference playlistRef = FirebaseDatabase.getInstance()
+                .getReference("Rooms").child(roomID).child("playlist");
 
-        spotify.getTracks(getListAsString(trackIDs));
+        updateQueue(roomID);
 
-        displaySongs(songsList, tracks);
+        playlistRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                updateQueue(roomID);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
-    private void displaySongs(ListView listView, List<Track> tracks) {
-        List<SongItem> songItems = new ArrayList<>();
-
-        for (Track track : tracks) {
-            songItems.add(new SongItem(track.id, track.name, getArtistsAsString(track.artists)
-                    , getDurationAsString(track.duration_ms), 0, track.album.images.get(0).url));
-        }
-
-        ArrayAdapter<SongItem> songAdapter = new AudienceSongAdapter(this, songItems);
-
-        listView.setAdapter(songAdapter);
+    private void updateQueue(String roomID) {
+        // Uses an Adapter to populate the ListView DJ Home with each PlaylistTrack
+        AudienceSongAdapter playlistAdapter = new AudienceSongAdapter(this, roomID, tracks);
+        songsList.setAdapter(playlistAdapter);
     }
 
     private String getListAsString(List<String> list) {

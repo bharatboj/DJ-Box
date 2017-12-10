@@ -15,7 +15,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class AudienceSongAdapter extends ArrayAdapter<SongItem> {
+import kaaes.spotify.webapi.android.models.Track;
+
+import static edu.illinois.finalproject.DJBoxUtils.getArtistsAsString;
+import static edu.illinois.finalproject.DJBoxUtils.getNumLikesForSong;
+
+public class AudienceSongAdapter extends ArrayAdapter<Track> {
+    private String roomID;
+
     private static class AudienceSongViewHolder {
         ImageView songImageView;
         TextView nameTextView;
@@ -24,14 +31,16 @@ public class AudienceSongAdapter extends ArrayAdapter<SongItem> {
         ToggleButton likeButton;
     }
 
-    AudienceSongAdapter(Context context, List<SongItem> songs) {
+    AudienceSongAdapter(Context context, String roomID, List<Track> songs) {
         super(context, R.layout.audience_home_song_item, songs);
+
+        this.roomID = roomID;
     }
 
     @NonNull
     @Override
-    public View getView(int pos, View itemView, ViewGroup parent) {
-        SongItem song = getItem(pos);
+    public View getView(int pos, View itemView, @NonNull ViewGroup parent) {
+        Track track = getItem(pos);
 
         if (itemView == null) {
             itemView = LayoutInflater.from(getContext())
@@ -45,15 +54,15 @@ public class AudienceSongAdapter extends ArrayAdapter<SongItem> {
         viewHolder.songImageView = (ImageView) itemView.findViewById(R.id.iv_song_aud);
         viewHolder.likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite_aud);
 
-        populateViews(viewHolder, pos, itemView, song);
+        populateViews(viewHolder, pos, itemView, track);
 
         return itemView;
     }
 
-    private void populateViews(AudienceSongViewHolder viewHolder, int pos, View itemView, SongItem song) {
-        viewHolder.nameTextView.setText(song.getName());
-        viewHolder.artistsTextView.setText(song.getArtists());
-        viewHolder.numLikesTextView.setText(String.valueOf(song.getNumLikes()));
+    private void populateViews(AudienceSongViewHolder viewHolder, int pos, View itemView, Track track) {
+        viewHolder.nameTextView.setText(track.name);
+        viewHolder.artistsTextView.setText(getArtistsAsString(track.artists));
+        viewHolder.numLikesTextView.setText(getNumLikesForSong(roomID, track.id));
 
         if (pos == 0) {
             itemView.setBackgroundColor(Color.rgb(188, 207, 221));
@@ -73,7 +82,7 @@ public class AudienceSongAdapter extends ArrayAdapter<SongItem> {
 
         // load playlist image into PlaylistImageView only if playlist contains image,
         // else loads a default image Spotify normally uses
-        String imageUrl = song.getImageUrl();
+        String imageUrl = track.album.images.get(0).url;
         Picasso.with(itemView.getContext()).load(imageUrl).into(viewHolder.songImageView);
     }
 }

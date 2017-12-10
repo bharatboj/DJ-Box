@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -84,21 +82,6 @@ class DJBoxUtils extends AppCompatActivity {
         });
 
         writeSignal.await(2, TimeUnit.SECONDS);
-    }
-
-    /**
-     * Returns number of likes for a song in a specified room
-     *
-     * @param roomID        String representing the room ID
-     * @param spotifyID     String representing the Spotify track ID
-     * @return              number of likes for a song in the room
-     * @throws Exception    if setRoomsSnapshot() does not work properly
-     */
-    static int getNumLikesForSong(final String roomID, final String spotifyID) throws Exception {
-        // makes sure the snapshot of the room is updated
-        setRoomsSnapshot();
-        return (int) roomsSnapshot.child(roomID)
-                .child("Songs").child(spotifyID).getChildrenCount();
     }
 
     /**
@@ -342,23 +325,30 @@ class DJBoxUtils extends AppCompatActivity {
 //        });
 //    }
 
-    static void displaySongs(ListView listView, User userType, Context context) {
-        List<SongItem> songItems = new ArrayList<>();
+//    static void displaySongs(ListView listView, User userType, Context context) {
+//        List<SimpleTrack> songItems = new ArrayList<>();
+//
+//        for (Track track : songs.keySet()) {
+//            songItems.add(new SimpleTrack(track.id, track.name, getArtistsAsString(track.artists)
+//                    , getDurationAsString(track.duration_ms), songs.get(track)
+//                    , track.album.images.get(0).url));
+//        }
+//
+//        ArrayAdapter<SimpleTrack> songAdapter;
+//        if (userType == User.DISC_JOCKEY)
+//            songAdapter = new DJSongAdapter(context, songItems);
+//        else {
+//            songAdapter = new AudienceSongAdapter(context, songItems);
+//        }
+//
+//        listView.setAdapter(songAdapter);
+//    }
 
-        for (Track track : songs.keySet()) {
-            songItems.add(new SongItem(track.id, track.name, getArtistsAsString(track.artists)
-                    , getDurationAsString(track.duration_ms), songs.get(track)
-                    , track.album.images.get(0).url));
-        }
+    static String getDurationAsString(long durationMs) {
+        int durationInMins = (int) durationMs / 60000;
+        int durationInSecs = (int) durationMs % 60000 / 1000;
 
-        ArrayAdapter<SongItem> songAdapter;
-        if (userType == User.DISC_JOCKEY)
-            songAdapter = new DJSongAdapter(context, songItems);
-        else {
-            songAdapter = new AudienceSongAdapter(context, songItems);
-        }
-
-        listView.setAdapter(songAdapter);
+        return durationInMins + ":" + ((durationInSecs < 10) ? ("0" + durationInSecs) : durationInSecs);
     }
 
     static String getArtistsAsString(List<ArtistSimple> artistList) {
@@ -372,11 +362,36 @@ class DJBoxUtils extends AppCompatActivity {
         return str.toString();
     }
 
-    private static int getNumLikesForSong(DataSnapshot roomSnapshot, String trackID) {
-        return (int) roomSnapshot.child("Songs").child(trackID).getChildrenCount();
+    /**
+     * Returns number of likes for a song in a specified room
+     *
+     * @param roomID        String representing the room ID
+     * @param trackID       String representing the Spotify track ID
+     * @return              number of likes for a song in the room
+     * @throws Exception    if setRoomsSnapshot() does not work properly
+     */
+    static int getNumLikesForSong(String roomID, String trackID) {
+        DatabaseReference trackIDRef = FirebaseDatabase.getInstance().getReference("Rooms")
+                .child(roomID).child("likes").child(trackID);
+
+        int[] num = new int[1];
+
+        trackIDRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                num[0] = (int) dataSnapshot.getChildrenCount();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        return num[0];
     }
 
-    static String getDurationAsString(long durationMs) {
+    static String getTrackDuration(long durationMs) {
         int durationInMins = (int) durationMs / 60000;
         int durationInSecs = (int) durationMs % 60000 / 1000;
 

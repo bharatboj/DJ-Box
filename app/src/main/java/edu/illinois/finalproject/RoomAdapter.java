@@ -12,6 +12,9 @@ import android.widget.TextView;
 import java.util.List;
 
 public class RoomAdapter extends ArrayAdapter<Room> {
+
+    private String roomID;
+
     /**
      * Inner class to hold a ViewHolder for Room
      */
@@ -25,8 +28,10 @@ public class RoomAdapter extends ArrayAdapter<Room> {
      * @param context   Context object that holds context of calling Activity
      * @param rooms     List<Room> object that contains list of Room objects
      */
-    RoomAdapter(Context context, List<Room> rooms) {
+    RoomAdapter(final Context context, String roomID, final List<Room> rooms) {
         super(context, R.layout.join_room_list_item, rooms);
+
+        this.roomID = roomID;
     }
 
     /**
@@ -39,7 +44,7 @@ public class RoomAdapter extends ArrayAdapter<Room> {
      */
     @NonNull
     @Override
-    public View getView(int pos, View itemView, @NonNull ViewGroup parent) {
+    public View getView(final int pos, View itemView, @NonNull final ViewGroup parent) {
         Room room = getItem(pos);
 
         if (itemView == null) {
@@ -62,7 +67,7 @@ public class RoomAdapter extends ArrayAdapter<Room> {
      * @param viewHolder    ViewHolder object that needs to be populated
      * @param room          Room object that contains information about room
      */
-    private void populateViews(RoomViewHolder viewHolder, Room room) {
+    private void populateViews(final RoomViewHolder viewHolder, final Room room) {
         viewHolder.nameTextView.setText(room.getName());
     }
 
@@ -71,11 +76,12 @@ public class RoomAdapter extends ArrayAdapter<Room> {
             final Context context = view.getContext();
             Intent audienceHomeIntent = new Intent(context, AudienceHomeActivity.class);
             audienceHomeIntent.putExtra("room", room);
+            audienceHomeIntent.putExtra("roomID", roomID);
             context.startActivity(audienceHomeIntent);
         });
     }
 
-    private void passParcelableOnChange(final View itemView, Room room) {
+    private void passParcelableOnChange(final View itemView, final Room room) {
         final Context context = itemView.getContext();
         Intent audienceHomeIntent = new Intent(context, AudienceHomeActivity.class);
         audienceHomeIntent.putExtra("room", room);

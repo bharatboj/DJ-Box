@@ -2,7 +2,6 @@ package edu.illinois.finalproject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,20 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
-import kaaes.spotify.webapi.android.models.PlaylistTrack;
-
-import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 
 // Used code from url below as reference:
 // https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
@@ -100,62 +90,12 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistSimple> {
      */
     private void openDJHomeOnClick(final View itemView, final PlaylistSimple playlist) {
         itemView.setOnClickListener(view -> {
-            List<PlaylistTrack> playlistTracks = getPlaylistTracks(playlist);
-            addPlaylistTracksToDatabase(playlistTracks);
-
             final Context context = view.getContext();
             Intent djHomeIntent = new Intent(context, DJHomeActivity.class);
-            djHomeIntent.putParcelableArrayListExtra("playlistTracks"
-                    , (ArrayList<? extends Parcelable>) playlistTracks);
+            djHomeIntent.putExtra("roomID", roomID);
+            djHomeIntent.putExtra("playlist", playlist);
             context.startActivity(djHomeIntent);
         });
-    }
-
-    /**
-     * Adds all trackIDs in playlist to FirebaseDatabase
-     *
-     * @param playlistTracks    List of PlaylistTrack objects that contain ids
-     *                          to be added to database
-     */
-    private void addPlaylistTracksToDatabase(List<PlaylistTrack> playlistTracks) {
-        // goes through each PlaylistTrack object in playlist and creates a Map:
-        // (track index -> track id)
-        Map<String, Object> playlistTrackIDs = new HashMap<>();
-        for (int index = 0; index < playlistTracks.size(); index++) {
-            playlistTrackIDs.put(String.valueOf(index), playlistTracks.get(index).track.id);
-        }
-
-        // add a playlist containing the songIDs in the respective room
-        DatabaseReference roomRef = FirebaseDatabase.getInstance().getReference("Rooms")
-                .child(roomID).child("playlist");
-        roomRef.updateChildren(playlistTrackIDs);
-    }
-
-    /**
-     * Returns a list of PlayTrack objects that are contained within playlist
-     *
-     * @param playlist      PlaylistSimple object to obtain PlaylistTrack objects from
-     * @return              a list of PlayTrack objects that are contained within playlist
-     */
-    private List<PlaylistTrack> getPlaylistTracks(PlaylistSimple playlist) {
-        String playlistOwnerID = playlist.owner.id;
-        String playlistID = playlist.id;
-        List<PlaylistTrack> playlistTracks = new ArrayList<>();
-
-        SpotifyService spotify = getSpotifyService();
-
-        // options Map<String, Object> is used to handle offsets and limits so user can add more than
-        // limit number of tracks for each API call
-        Map<String, Object> options = new HashMap<>();
-        options.put(SpotifyService.LIMIT, 100);
-
-        // adds all Track objects within PlaylistSimple object to a List of PlaylistTrack objects
-        for (int offset = 0; offset < playlist.tracks.total; offset += 100) {
-            options.put(SpotifyService.OFFSET, offset);
-            playlistTracks.addAll(spotify.getPlaylistTracks(playlistOwnerID, playlistID, options).items);
-        }
-
-        return playlistTracks;
     }
 
 }

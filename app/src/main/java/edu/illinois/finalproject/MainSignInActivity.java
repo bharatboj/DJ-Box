@@ -63,7 +63,9 @@ public class MainSignInActivity extends AppCompatActivity {
      * @param data          Intent object that carries the result data
      */
     @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode,
+                                    final Intent data) {
+
         super.onActivityResult(requestCode, resultCode, data);
 
         // Check if result comes from the correct activity
@@ -86,16 +88,17 @@ public class MainSignInActivity extends AppCompatActivity {
      *              pulled from the Spotify API
      */
     private AuthenticationRequest getAuthenticationRequest(final AuthenticationResponse.Type type) {
+        String[] scopes = new String[]{"playlist-read-private", "playlist-read-collaborative"
+                    , "playlist-modify-public", "playlist-modify-private", "streaming"
+                    , "ugc-image-upload", "user-follow-modify", "user-follow-read"
+                    , "user-library-read", "user-library-modify", "user-read-private"
+                    , "user-read-birthdate", "user-read-email", "user-top-read"
+                    , "user-read-playback-state", "user-modify-playback-state"
+                    , "user-read-currently-playing", "user-read-recently-played"};
+
         return new AuthenticationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(false)
-                .setScopes(new String[]{"playlist-read-private", "playlist-read-collaborative"
-                        , "playlist-modify-public", "playlist-modify-private", "streaming"
-                        , "ugc-image-upload", "user-follow-modify", "user-follow-read"
-                        , "user-library-read", "user-library-modify", "user-read-private"
-                        , "user-read-birthdate", "user-read-email", "user-top-read"
-                        , "user-read-playback-state", "user-modify-playback-state"
-                        , "user-read-currently-playing", "user-read-recently-played"})
-                .setCampaign("your-campaign-token")
+                .setScopes(scopes)
                 .build();
     }
 

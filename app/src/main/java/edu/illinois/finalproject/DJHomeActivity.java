@@ -21,7 +21,6 @@ public class DJHomeActivity extends AppCompatActivity {
         setContentView(R.layout.dj_home);
 
         ListView songsList = (ListView) findViewById(R.id.lv_playlist_songs);
-
     }
 
     /**

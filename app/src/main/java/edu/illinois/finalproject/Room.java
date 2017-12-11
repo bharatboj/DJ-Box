@@ -3,6 +3,7 @@ package edu.illinois.finalproject;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ class Room implements Parcelable {
     private String dj;
     private HashMap<String, List<String>> likes;
     private String name;
-    private List<String> playlist;
+    private List<SimpleTrack> playlist;
     private Double latitude;
     private Double longitude;
 
@@ -20,7 +21,7 @@ class Room implements Parcelable {
     }
 
     public Room(String access, String dj, HashMap<String, List<String>> likes, String name
-            , List<String> playlist, Double latitude, Double longitude) {
+            , List<SimpleTrack> playlist, Double latitude, Double longitude) {
         this.access = access;
         this.dj = dj;
         this.likes = likes;
@@ -46,7 +47,7 @@ class Room implements Parcelable {
         return name;
     }
 
-    public List<String> getPlaylist() {
+    public List<SimpleTrack> getPlaylist() {
         return playlist;
     }
 
@@ -69,7 +70,7 @@ class Room implements Parcelable {
         dest.writeString(this.dj);
         dest.writeSerializable(this.likes);
         dest.writeString(this.name);
-        dest.writeStringList(this.playlist);
+        dest.writeList(this.playlist);
         dest.writeValue(this.latitude);
         dest.writeValue(this.longitude);
     }
@@ -79,7 +80,8 @@ class Room implements Parcelable {
         this.dj = in.readString();
         this.likes = (HashMap<String, List<String>>) in.readSerializable();
         this.name = in.readString();
-        this.playlist = in.createStringArrayList();
+        this.playlist = new ArrayList<>();
+        in.readList(this.playlist, SimpleTrack.class.getClassLoader());
         this.latitude = (Double) in.readValue(Double.class.getClassLoader());
         this.longitude = (Double) in.readValue(Double.class.getClassLoader());
     }

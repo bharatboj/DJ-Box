@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:background="#444444"
     android:padding="10dp">
 
     <ImageView
@@ -19,7 +20,7 @@
         android:id="@+id/ll_song_description_aud"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="55dp"
+        android:layout_marginStart="65dp"
         android:orientation="vertical"
         android:layout_marginLeft="55dp"
         android:layout_marginRight="75dp"

@@ -5,17 +5,20 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AudienceHomeActivity extends AppCompatActivity {
 
     private ListView songsList;
+
+    List<SimpleTrack> tracks;
 
     /**
      * This function sets up the activity
@@ -32,33 +35,25 @@ public class AudienceHomeActivity extends AppCompatActivity {
         Room room = intent.getParcelableExtra("room");
         String roomID = intent.getStringExtra("roomID");
 
+        // Sets the title of the ActionBar for this activity to the name of the room (Party)
+        setTitle(room.getName());
+
         songsList = (ListView) findViewById(R.id.lv_playlist_songs_aud);
 
+        tracks = new ArrayList<>();
         displaySongs(roomID);
     }
 
-    private void displaySongs(String roomID) {
+    private void setTracks(String roomID) {
         DatabaseReference playlistRef = FirebaseDatabase.getInstance()
                 .getReference("Rooms").child(roomID).child("playlist");
 
-        updateQueue(roomID);
-
-        playlistRef.addChildEventListener(new ChildEventListener() {
+        playlistRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                updateQueue(roomID);
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onDataChange(DataSnapshot playlistSnapshot) {
+                for (DataSnapshot track : playlistSnapshot.getChildren()) {
+                    tracks.add(track.getValue(SimpleTrack.class));
+                }
             }
 
             @Override
@@ -67,15 +62,10 @@ public class AudienceHomeActivity extends AppCompatActivity {
         });
     }
 
-    private void updateQueue(String roomID) {
-        // Uses an Adapter to populate the ListView DJ Home with each PlaylistTrack
+    private void displaySongs(String roomID) {
+        setTracks(roomID);
         AudienceSongAdapter playlistAdapter = new AudienceSongAdapter(this, roomID, tracks);
         songsList.setAdapter(playlistAdapter);
-    }
-
-    private String getListAsString(List<String> list) {
-        String listString = list.toString();
-        return listString.substring(1, listString.length() - 1);
     }
 
 }

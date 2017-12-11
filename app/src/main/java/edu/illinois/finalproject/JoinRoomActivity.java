@@ -4,15 +4,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-
-import static edu.illinois.finalproject.DJBoxUtils.roomsRef;
 
 public class JoinRoomActivity extends AppCompatActivity {
 
@@ -29,7 +27,6 @@ public class JoinRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.join_room);
 
-        roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
         roomList = (ListView) findViewById(R.id.lv_join_room_list);
         rooms = new Hashtable<>();
 
@@ -37,40 +34,31 @@ public class JoinRoomActivity extends AppCompatActivity {
     }
 
     private void displayListOfRooms() {
-        roomsRef.addChildEventListener(new ChildEventListener() {
+        DatabaseReference roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
+
+        roomsRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 updateRoom(dataSnapshot);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                updateRoom(dataSnapshot);
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-
     }
 
-    private void updateRoom(DataSnapshot roomSnap) {
-        String roomID = roomSnap.getKey();
-        Room room = roomSnap.getValue(Room.class);
+    private void updateRoom(DataSnapshot roomsSnap) {
+        // assuming there will not be many rooms that show up on the user's page setting to
+        // an empty HashTable each time there's a change will not disrupt performance much.
+        rooms.clear();
+        for (DataSnapshot roomSnap : roomsSnap.getChildren()) {
+            String roomID = roomSnap.getKey();
+            Room room = roomSnap.getValue(Room.class);
+            rooms.put(roomID, room);
+        }
 
-        // HashTable used to ensure no duplicates are displayed and can associate Room with roomID
-        rooms.put(roomID, room);
-
-        RoomAdapter roomAdapter = new RoomAdapter(this, roomID, new ArrayList<>(rooms.values()));
+        RoomAdapter roomAdapter = new RoomAdapter(this, rooms);
         roomList.setAdapter(roomAdapter);
     }
 

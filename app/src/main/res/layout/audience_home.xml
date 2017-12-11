@@ -40,7 +40,6 @@
             android:id="@+id/lv_playlist_songs_aud"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="10dp"
             android:layout_weight="1"
             android:divider="#777777"
             android:dividerHeight="1sp" />

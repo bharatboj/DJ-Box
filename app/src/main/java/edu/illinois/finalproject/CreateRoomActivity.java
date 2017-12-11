@@ -49,7 +49,14 @@ public class CreateRoomActivity extends AppCompatActivity {
         // initialize all room attributes to their respective variables
         String roomID = getNewRoomID();
         String djID = getSpotifyService().getMe().id;
+
+        // if user doesn't enter a name, then the DJ's username
+        // is used as room name because it is unique
         String roomName = roomNameEditText.getText().toString();
+        if (roomName.isEmpty()) {
+            roomName = djID;
+        }
+
         String pass = passwordEditText.getText().toString();
         double latitude = 12.221;
         double longitude = 43.444;
@@ -63,6 +70,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         roomVals.put("longitude", longitude);
 
         // if a password exists, then access is set to private, else we know it's public
+        // Note: if user decides to not click any button, it is assumed to be public
         if (passwordEditText.isEnabled()) {
             roomVals.put("access", "Private");
             roomVals.put("pass", pass);
@@ -100,8 +108,8 @@ public class CreateRoomActivity extends AppCompatActivity {
      * @param view      View object that is clicked
      */
     public void onPrivateClicked(View view) {
-        // Checks Private button on click and allows user to type password for room and
-        // unchecks Public button
+        // Checks Private button on click and allows user to
+        // type password for room and unchecks Public button
         privateButton.setChecked(true);
         passwordEditText.setEnabled(true);
         publicButton.setChecked(false);

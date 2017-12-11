@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Final Project</string>
+    <string name="app_name">DJ-BOX</string>
     <string name="disk_jockey">Disc Jockey</string>
     <string name="audience">Audience</string>
     <string name="sign_in_as">Sign in as:</string>
@@ -16,7 +16,7 @@
     <string name="log_out">Log Out</string>
     <string name="name">Name:</string>
     <string name="playlist_picture">Playlist Picture</string>
-    <string name="rooms">Rooms</string>
+    <string name="rooms">Active Rooms</string>
     <string name="join">Join</string>
     <string name="room_name">Room Name</string>
     <string name="room_distance">N m</string>
@@ -37,4 +37,5 @@
     <string name="min_sec">min:sec</string>
     <string name="selected_room_name">Selected Room Name</string>
     <string name="settings">Settings</string>
+    <string name="dj_box">DJ-Box</string>
 </resources>

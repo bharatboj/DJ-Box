@@ -1,5 +1,6 @@
 package edu.illinois.finalproject;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -9,11 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 public class RoomAdapter extends ArrayAdapter<Room> {
 
-    private String roomID;
+    private List<String> roomIDs;
 
     /**
      * Inner class to hold a ViewHolder for Room
@@ -28,10 +31,10 @@ public class RoomAdapter extends ArrayAdapter<Room> {
      * @param context   Context object that holds context of calling Activity
      * @param rooms     List<Room> object that contains list of Room objects
      */
-    RoomAdapter(final Context context, String roomID, final List<Room> rooms) {
-        super(context, R.layout.join_room_list_item, rooms);
+    RoomAdapter(final Context context, final Hashtable<String, Room> rooms) {
+        super(context, R.layout.join_room_list_item, new ArrayList<>(rooms.values()));
 
-        this.roomID = roomID;
+        this.roomIDs = new ArrayList<>(rooms.keySet());
     }
 
     /**
@@ -46,6 +49,7 @@ public class RoomAdapter extends ArrayAdapter<Room> {
     @Override
     public View getView(final int pos, View itemView, @NonNull final ViewGroup parent) {
         Room room = getItem(pos);
+        String roomID = roomIDs.get(pos);
 
         if (itemView == null) {
             itemView = LayoutInflater.from(getContext())
@@ -56,7 +60,7 @@ public class RoomAdapter extends ArrayAdapter<Room> {
         viewHolder.nameTextView = (TextView) itemView.findViewById(R.id.tv_room_name);
 
         populateViews(viewHolder, room);
-        openAudienceHomeOnClick(itemView, room);
+        openAudienceHomeOnClick(itemView, roomID, room);
 
         return itemView;
     }
@@ -71,20 +75,22 @@ public class RoomAdapter extends ArrayAdapter<Room> {
         viewHolder.nameTextView.setText(room.getName());
     }
 
-    private void openAudienceHomeOnClick(final View itemView, final Room room) {
+    private void openAudienceHomeOnClick(final View itemView, final String roomID, final Room room) {
         itemView.setOnClickListener(view -> {
             final Context context = view.getContext();
             Intent audienceHomeIntent = new Intent(context, AudienceHomeActivity.class);
             audienceHomeIntent.putExtra("room", room);
             audienceHomeIntent.putExtra("roomID", roomID);
             context.startActivity(audienceHomeIntent);
-        });
-    }
 
-    private void passParcelableOnChange(final View itemView, final Room room) {
-        final Context context = itemView.getContext();
-        Intent audienceHomeIntent = new Intent(context, AudienceHomeActivity.class);
-        audienceHomeIntent.putExtra("room", room);
+            // loads up progress bar as it transitions to next activity
+            ProgressDialog nDialog = new ProgressDialog(getContext());
+            nDialog.setMessage("Loading..");
+            nDialog.setTitle("Accessing Party Playlist");
+            nDialog.setIndeterminate(false);
+            nDialog.setCancelable(true);
+            nDialog.show();
+        });
     }
 
 }

@@ -15,15 +15,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import kaaes.spotify.webapi.android.models.Track;
-
-import static edu.illinois.finalproject.DJBoxUtils.getArtistsAsString;
 import static edu.illinois.finalproject.DJBoxUtils.getNumLikesForSong;
-import static edu.illinois.finalproject.DJBoxUtils.getTrackDuration;
 
 // Used code from url below as reference:
 // https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
-public class DJSongAdapter extends ArrayAdapter<Track> {
+public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
     private String roomID;
 
     private static class DJSongViewHolder {
@@ -35,7 +31,7 @@ public class DJSongAdapter extends ArrayAdapter<Track> {
         ToggleButton likeButton;
     }
 
-    DJSongAdapter(Context context, String roomID, List<Track> songs) {
+    DJSongAdapter(Context context, String roomID, List<SimpleTrack> songs) {
         super(context, R.layout.dj_home_song_item, songs);
 
         this.roomID = roomID;
@@ -44,7 +40,7 @@ public class DJSongAdapter extends ArrayAdapter<Track> {
     @NonNull
     @Override
     public View getView(int pos, View itemView, @NonNull ViewGroup parent) {
-        Track track = getItem(pos);
+        SimpleTrack track = getItem(pos);
 
         if (itemView == null) {
             itemView = LayoutInflater.from(getContext())
@@ -64,11 +60,12 @@ public class DJSongAdapter extends ArrayAdapter<Track> {
         return itemView;
     }
 
-    private void populateViews(DJSongViewHolder viewHolder, int pos, View itemView, Track track) {
-        viewHolder.nameTextView.setText(track.name);
-        viewHolder.artistsTextView.setText(getArtistsAsString(track.artists));
-        viewHolder.numLikesTextView.setText(getNumLikesForSong(roomID, track.id));
-        viewHolder.durationTextView.setText(getTrackDuration(track.duration_ms));
+    private void populateViews(DJSongViewHolder viewHolder, int pos, View itemView, SimpleTrack track) {
+        viewHolder.nameTextView.setText(track.getName());
+        viewHolder.artistsTextView.setText(track.getArtists());
+        viewHolder.numLikesTextView.setText(String.valueOf(
+                getNumLikesForSong(roomID, track.getId())));
+        viewHolder.durationTextView.setText(track.getDuration());
 
         // highlights the currently playing song, which is the first one
         if (pos == 0) {
@@ -91,7 +88,7 @@ public class DJSongAdapter extends ArrayAdapter<Track> {
 
         // load playlist image into PlaylistImageView only if playlist contains image,
         // else loads a default image Spotify normally uses
-        String imageUrl = track.album.images.get(0).url;
+        String imageUrl = track.getImageUrl();
         Picasso.with(itemView.getContext()).load(imageUrl).into(viewHolder.songImageView);
     }
 

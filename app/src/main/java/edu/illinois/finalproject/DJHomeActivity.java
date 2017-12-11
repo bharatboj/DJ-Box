@@ -24,7 +24,6 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 
 import static edu.illinois.finalproject.DJBoxUtils.getArtistsAsString;
-import static edu.illinois.finalproject.DJBoxUtils.getNumLikesForSong;
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 import static edu.illinois.finalproject.DJBoxUtils.getTrackDuration;
 import static edu.illinois.finalproject.DJBoxUtils.openActivity;
@@ -33,7 +32,7 @@ public class DJHomeActivity extends AppCompatActivity {
 
     private ListView songsList;
 
-    private SparseArray<Track> tracks;
+    private SparseArray<SimpleTrack> tracks;
 
     /**
      * This function sets up the activity
@@ -66,7 +65,7 @@ public class DJHomeActivity extends AppCompatActivity {
         // (track index -> track information)
         Map<String, Object> playlistTracks = new HashMap<>();
         for (int index = 0; index < tracks.size(); index++) {
-            playlistTracks.put(String.valueOf(index), getSimpleRoomTrack(roomID, tracks.get(index)));
+            playlistTracks.put(String.valueOf(index), tracks.get(index));
         }
 
         // add a playlist containing the songIDs in the respective room
@@ -86,20 +85,14 @@ public class DJHomeActivity extends AppCompatActivity {
 
         SpotifyService spotify = getSpotifyService();
 
-        // options Map<String, Object> is used to handle offsets and limits so user can add more than
-        // limit number of tracks for each API call
-        Map<String, Object> options = new HashMap<>();
-        options.put(SpotifyService.LIMIT, 100);
-
-        // adds all Track objects within PlaylistSimple object to a List of Track objects
-        for (int offset = 0; offset < playlist.tracks.total; offset += 100) {
-            options.put(SpotifyService.OFFSET, offset);
-            List<PlaylistTrack> playlistTracks = spotify
-                    .getPlaylistTracks(playlistOwnerID, playlistID, options).items;
-            for (int index = 0; index < playlistTracks.size(); index++) {
-                Track track = playlistTracks.get(index).track;
-                tracks.put(index, track);
-            }
+        // adds 100 Track objects within PlaylistSimple object to a List of Track objects
+        // possible to add more, but decided that 100 is a reasonable limit for a playlist
+        // that is going to be continuously edited during the party
+        List<PlaylistTrack> playlistTracks = spotify
+                .getPlaylistTracks(playlistOwnerID, playlistID).items;
+        for (int index = 0; index < playlistTracks.size(); index++) {
+            Track track = playlistTracks.get(index).track;
+            tracks.put(index, getSimpleRoomTrack(track));
         }
     }
 
@@ -119,7 +112,7 @@ public class DJHomeActivity extends AppCompatActivity {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 String trackID = dataSnapshot.getValue(String.class);
                 Track track = spotify.getTrack(trackID);
-                tracks.put(Integer.parseInt(dataSnapshot.getKey()), track);
+                tracks.put(Integer.parseInt(dataSnapshot.getKey()), getSimpleRoomTrack(track));
                 updateQueue(roomID);
             }
 
@@ -179,9 +172,8 @@ public class DJHomeActivity extends AppCompatActivity {
         return arrayList;
     }
 
-    private SimpleTrack getSimpleRoomTrack(String roomID, Track track) {
+    private SimpleTrack getSimpleRoomTrack(Track track) {
         return new SimpleTrack(track.id, track.name, getArtistsAsString(track.artists)
-                , getTrackDuration(track.duration_ms), getNumLikesForSong(roomID, track.id)
-                , track.album.images.get(0).url);
+                , getTrackDuration(track.duration_ms), track.album.images.get(0).url);
     }
 }

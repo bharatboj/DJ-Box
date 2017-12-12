@@ -29,6 +29,7 @@ public class JoinRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.join_room);
 
+        // initialize fields
         roomList = (ListView) findViewById(R.id.lv_join_room_list);
         rooms = new Hashtable<>();
 
@@ -44,13 +45,17 @@ public class JoinRoomActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Displays all the Rooms that are listed in Firebase
+     */
     private void displayListOfRooms() {
         DatabaseReference roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
 
         roomsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                updateRoom(dataSnapshot);
+                // update rooms every time there's a change
+                updateRooms(dataSnapshot);
             }
 
             @Override
@@ -59,16 +64,23 @@ public class JoinRoomActivity extends AppCompatActivity {
         });
     }
 
-    private void updateRoom(DataSnapshot roomsSnap) {
+    /**
+     * Updates all the Rooms based on the DataSnapshot of the list of rooms provided
+     *
+     * @param roomsSnap     DataSnapshot object that represents all the room subtrees
+     */
+    private void updateRooms(DataSnapshot roomsSnap) {
         // assuming there will not be many rooms that show up on the user's page setting to
         // an empty HashTable each time there's a change will not disrupt performance much.
         rooms.clear();
         for (DataSnapshot roomSnap : roomsSnap.getChildren()) {
+            // adds the roomID and room to
             String roomID = roomSnap.getKey();
             Room room = roomSnap.getValue(Room.class);
             rooms.put(roomID, room);
         }
 
+        // Populates the join room ListView with all the appropriate room informatoin
         RoomAdapter roomAdapter = new RoomAdapter(this, rooms);
         roomList.setAdapter(roomAdapter);
     }

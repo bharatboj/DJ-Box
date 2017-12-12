@@ -1,7 +1,9 @@
 package edu.illinois.finalproject;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,6 +13,7 @@ import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import static edu.illinois.finalproject.DJBoxUtils.openActivity;
+import static edu.illinois.finalproject.SpotifyClient.CLIENT_ID;
 
 /**
  * A fair amount of code, such as the getAuthenticationRequest() and getRedirect url, was reused
@@ -19,9 +22,7 @@ import static edu.illinois.finalproject.DJBoxUtils.openActivity;
  *      /android/authentication/sample/MainActivity.java
  */
 public class MainSignInActivity extends AppCompatActivity {
-
     // Request code will be used to verify if result comes from the login activity. Can be set to any integer.
-    public static final String CLIENT_ID = "089d841ccc194c10a77afad9e1c11d54";
     private static final int REQUEST_CODE = 1337;
     private static String mAccessToken;
 
@@ -30,6 +31,7 @@ public class MainSignInActivity extends AppCompatActivity {
      *
      * @param savedInstanceState    a Bundle object containing the activity's previously saved state
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +42,14 @@ public class MainSignInActivity extends AppCompatActivity {
     }
 
     /**
-     * This function opens the Audience home screen when the audience is signed in
+     * This function opens the Audience home screen when the audience wants to "Join Party"
      *
      * @param view      View object that has actions performed when clicked on
      */
     public void onAudienceButtonClicked(final View view) {
-        openActivity(this, JoinRoomActivity.class);
+        // create intent to lead user to Join Room screen
+        Intent joinRoomIntent = new Intent(this, JoinRoomActivity.class);
+        startActivity(joinRoomIntent);
     }
 
     /**
@@ -54,7 +58,8 @@ public class MainSignInActivity extends AppCompatActivity {
      * @param view      View object that has actions performed when clicked on
      */
     public void onDJButtonClicked(final View view) {
-        final AuthenticationRequest request = getAuthenticationRequest(AuthenticationResponse.Type.TOKEN);
+        final AuthenticationRequest request =
+                getAuthenticationRequest(AuthenticationResponse.Type.TOKEN);
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
@@ -74,8 +79,10 @@ public class MainSignInActivity extends AppCompatActivity {
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
             final AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
+            // sets mAccessToken to the access token that is returned from the response
             mAccessToken = response.getAccessToken();
 
+            // User logged in correctly
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
                 openActivity(this, CreateRoomActivity.class);
             }
@@ -91,6 +98,8 @@ public class MainSignInActivity extends AppCompatActivity {
      *              pulled from the Spotify API
      */
     private AuthenticationRequest getAuthenticationRequest(final AuthenticationResponse.Type type) {
+        // probably more scopes than necessary but just added more in case required as application
+        // gets more complicated
         String[] scopes = new String[]{"playlist-read-private", "playlist-read-collaborative"
                     , "playlist-modify-public", "playlist-modify-private", "streaming"
                     , "ugc-image-upload", "user-follow-modify", "user-follow-read"
@@ -117,6 +126,11 @@ public class MainSignInActivity extends AppCompatActivity {
                 .build();
     }
 
+    /**
+     * Returns the Spotify Access Token
+     *
+     * @return      the Spotify Access Token
+     */
     public static String getAccessToken() {
         return mAccessToken;
     }

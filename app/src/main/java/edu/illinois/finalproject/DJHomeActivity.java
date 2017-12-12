@@ -38,8 +38,8 @@ import static com.spotify.sdk.android.player.SpotifyPlayer.NotificationCallback;
 import static edu.illinois.finalproject.DJBoxUtils.getArtistsAsString;
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 import static edu.illinois.finalproject.DJBoxUtils.getTrackDuration;
-import static edu.illinois.finalproject.MainSignInActivity.CLIENT_ID;
 import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
+import static edu.illinois.finalproject.SpotifyClient.CLIENT_ID;
 
 public class DJHomeActivity extends AppCompatActivity implements
         NotificationCallback, ConnectionStateCallback {
@@ -69,6 +69,9 @@ public class DJHomeActivity extends AppCompatActivity implements
         String roomID = intent.getStringExtra("roomID");
         Room room = intent.getParcelableExtra("room");
         PlaylistSimple playlist = intent.getParcelableExtra("playlist");
+
+        // Sets the title of the ActionBar for this activity to the name of the room (Party)
+        setTitle(room.getName());
 
         setTracks(playlist);
         addPlaylistTracksToDatabase(roomID, room);

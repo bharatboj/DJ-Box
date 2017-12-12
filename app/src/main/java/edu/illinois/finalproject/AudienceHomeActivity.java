@@ -14,6 +14,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.illinois.finalproject.RoomAdapter.nDialog;
+
 public class AudienceHomeActivity extends AppCompatActivity {
 
     private ListView songsList;
@@ -30,6 +32,8 @@ public class AudienceHomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.audience_home);
 
+        nDialog.dismiss();
+
         // gets Room that was passed through the intent
         Intent intent = getIntent();
         Room room = intent.getParcelableExtra("room");
@@ -41,6 +45,7 @@ public class AudienceHomeActivity extends AppCompatActivity {
         songsList = (ListView) findViewById(R.id.lv_playlist_songs_aud);
 
         tracks = new ArrayList<>();
+        setTracks(roomID);
         displaySongs(roomID);
     }
 
@@ -63,7 +68,6 @@ public class AudienceHomeActivity extends AppCompatActivity {
     }
 
     private void displaySongs(String roomID) {
-        setTracks(roomID);
         AudienceSongAdapter playlistAdapter = new AudienceSongAdapter(this, roomID, tracks);
         songsList.setAdapter(playlistAdapter);
     }

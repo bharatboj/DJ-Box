@@ -12,7 +12,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 
@@ -57,36 +56,29 @@ public class CreateRoomActivity extends AppCompatActivity {
             roomName = djID;
         }
 
-        String pass = passwordEditText.getText().toString();
         double latitude = 12.221;
         double longitude = 43.444;
 
-        // using a Map object that will contain all the attributes for the room
-        Map<String, Object> roomVals = new HashMap<>();
-
-        roomVals.put("dj", djID);
-        roomVals.put("name", roomName);
-        roomVals.put("latitude", latitude);
-        roomVals.put("longitude", longitude);
-
         // if a password exists, then access is set to private, else we know it's public
         // Note: if user decides to not click any button, it is assumed to be public
+        String pass = passwordEditText.getText().toString();
+        String access;
         if (passwordEditText.isEnabled()) {
-            roomVals.put("access", "Private");
-            roomVals.put("pass", pass);
+            access = "Private";
         } else {
-            roomVals.put("access", "Public");
+            access = "Public";
+            pass = null;
         }
 
-        // create a roomID with proper room values
-        FirebaseDatabase.getInstance().getReference("Rooms")
-                .child(roomID).updateChildren(roomVals);
+        Room room = new Room(access, djID, pass, new HashMap<>(), roomName
+                , null, latitude, longitude);
 
         // allow user to select playlist next
         // opens SelectPlaylist screen
         final Context context = view.getContext();
         Intent audienceHomeIntent = new Intent(context, SelectPlaylistActivity.class);
         audienceHomeIntent.putExtra("roomID", roomID);
+        audienceHomeIntent.putExtra("room", room);
         context.startActivity(audienceHomeIntent);
     }
 

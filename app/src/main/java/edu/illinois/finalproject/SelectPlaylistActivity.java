@@ -42,6 +42,7 @@ public class SelectPlaylistActivity extends AppCompatActivity {
     private void displayPlaylists() {
         // get roomID that was passed through intent
         String roomID = getIntent().getStringExtra("roomID");
+        Room room = getIntent().getParcelableExtra("room");
 
         // get SpotifyService to make API calls
         SpotifyService spotify = getSpotifyService();
@@ -50,7 +51,7 @@ public class SelectPlaylistActivity extends AppCompatActivity {
         playlists.removeIf(playlist -> playlist.tracks.total == 0);
 
         // Uses an Adapter to populate the ListView playlistList with each PlaylistSimpleObject
-        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, roomID, playlists);
+        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, roomID, room, playlists);
         playlistList.setAdapter(playlistAdapter);
     }
 

@@ -1,5 +1,6 @@
 package edu.illinois.finalproject;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -21,6 +22,8 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 public class PlaylistAdapter extends ArrayAdapter<PlaylistSimple> {
 
     private String roomID;
+    private Room room;
+    static ProgressDialog nDialog;
 
     private static class PlaylistViewHolder {
         TextView nameTextView;
@@ -29,10 +32,11 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistSimple> {
         ImageView playlistImageView;
     }
 
-    PlaylistAdapter(Context context, String roomID, List<PlaylistSimple> playlists) {
+    PlaylistAdapter(Context context, String roomID, Room room, List<PlaylistSimple> playlists) {
         super(context, R.layout.playlist_item, playlists);
 
         this.roomID = roomID;
+        this.room = room;
     }
 
     @NonNull
@@ -92,10 +96,26 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistSimple> {
         itemView.setOnClickListener(view -> {
             final Context context = view.getContext();
             Intent djHomeIntent = new Intent(context, DJHomeActivity.class);
+
+            // makes sure user cannot navigate backwards anymore
+            djHomeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
             djHomeIntent.putExtra("roomID", roomID);
+            djHomeIntent.putExtra("room", room);
             djHomeIntent.putExtra("playlist", playlist);
-            context.startActivity(djHomeIntent);
+            transitionToDJHome(context, djHomeIntent);
         });
+    }
+
+    private void transitionToDJHome(Context context, Intent intent) {
+        // loads up progress bar as it transitions to next activity
+        nDialog = new ProgressDialog(getContext());
+        nDialog.setMessage("Loading..");
+        nDialog.setTitle("Loading Party Playlist");
+        nDialog.setIndeterminate(false);
+        nDialog.setCancelable(true);
+        nDialog.show();
+
+        context.startActivity(intent);
     }
 
 }

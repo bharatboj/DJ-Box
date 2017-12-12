@@ -38,7 +38,7 @@
         <ListView
             android:id="@+id/lv_join_room_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:divider="#777777"
             android:dividerHeight="1sp"
             android:listSelector="#202020" />

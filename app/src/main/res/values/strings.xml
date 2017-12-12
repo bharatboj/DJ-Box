@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">DJ-BOX</string>
-    <string name="disk_jockey">Disc Jockey</string>
-    <string name="audience">Audience</string>
+    <string name="disk_jockey">Host Party</string>
+    <string name="audience">Join Party</string>
     <string name="sign_in_as">Sign in as:</string>
     <string name="log_in_with_facebook">Log in with Facebook</string>
     <string name="username_or_email">Username or email</string>
@@ -38,4 +38,10 @@
     <string name="selected_room_name">Selected Room Name</string>
     <string name="settings">Settings</string>
     <string name="dj_box">DJ-Box</string>
+    <string name="username">Username</string>
+    <string name="enter_room_password">Enter Room Password</string>
+    <string name="join_room">Join</string>
+    <string name="cancel">Cancel</string>
+    <string name="dj_overflow_button">DJ Overflow Button</string>
+    <string name="logout">Logout</string>
 </resources>

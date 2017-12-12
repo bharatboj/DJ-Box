@@ -35,6 +35,7 @@ public class MainSignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_sign_in);
 
+        // remove Title Bar of activity because I planned to use a custom design
         getSupportActionBar().hide();
     }
 

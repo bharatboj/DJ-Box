@@ -1,10 +1,14 @@
 package edu.illinois.finalproject;
 
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -12,65 +16,58 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayerEvent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 
+import static com.spotify.sdk.android.player.SpotifyPlayer.NotificationCallback;
 import static edu.illinois.finalproject.DJBoxUtils.getArtistsAsString;
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 import static edu.illinois.finalproject.DJBoxUtils.getTrackDuration;
-import static edu.illinois.finalproject.DJBoxUtils.openActivity;
+import static edu.illinois.finalproject.PlaylistAdapter.nDialog;
 
-public class DJHomeActivity extends AppCompatActivity {
+public class DJHomeActivity extends AppCompatActivity implements
+        NotificationCallback, ConnectionStateCallback {
 
     private ListView songsList;
 
     private SparseArray<SimpleTrack> tracks;
+    private Player mPlayer;
 
     /**
      * This function sets up the activity
      *
      * @param savedInstanceState    a Bundle object containing the activity's previously saved state
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dj_home);
 
+        // ends dialog once this activity is reached
+        nDialog.dismiss();
+
         songsList = (ListView) findViewById(R.id.lv_playlist_songs);
 
-        PlaylistSimple playlist = getIntent().getParcelableExtra("playlist");
-        String roomID = getIntent().getStringExtra("roomID");
+        Intent intent = getIntent();
+        String roomID = intent.getStringExtra("roomID");
+        Room room = intent.getParcelableExtra("room");
+        PlaylistSimple playlist = intent.getParcelableExtra("playlist");
 
         setTracks(playlist);
-        addPlaylistTracksToDatabase(roomID);
+        addPlaylistTracksToDatabase(roomID, room);
 
         displaySongs(roomID);
-    }
-
-    /**
-     * Adds all tracks information in playlist to Firebase Database
-     *
-     * @param roomID    String representing roomID of room to add playlist tracks to
-     */
-    private void addPlaylistTracksToDatabase(String roomID) {
-        // goes through each PlaylistTrack object in playlist and creates a Map:
-        // (track index -> track information)
-        Map<String, Object> playlistTracks = new HashMap<>();
-        for (int index = 0; index < tracks.size(); index++) {
-            playlistTracks.put(String.valueOf(index), tracks.get(index));
-        }
-
-        // add a playlist containing the songIDs in the respective room
-        FirebaseDatabase.getInstance().getReference("Rooms")
-                .child(roomID).child("playlist").updateChildren(playlistTracks);
     }
 
     /**
@@ -94,6 +91,19 @@ public class DJHomeActivity extends AppCompatActivity {
             Track track = playlistTracks.get(index).track;
             tracks.put(index, getSimpleRoomTrack(track));
         }
+    }
+
+    /**
+     * Adds all tracks information in playlist to Firebase Database
+     *
+     * @param roomID    String representing roomID of room to add playlist tracks to
+     */
+    private void addPlaylistTracksToDatabase(String roomID, Room room) {
+        // add a playlist containing the songIDs in the
+        // respective room and updates Firebase room values
+        room.setPlaylist(asList(tracks));
+        FirebaseDatabase.getInstance().getReference("Rooms")
+                .child(roomID).setValue(room);
     }
 
     private void displaySongs(String roomID) {
@@ -136,14 +146,26 @@ public class DJHomeActivity extends AppCompatActivity {
         songsList.setAdapter(playlistAdapter);
     }
 
+    private void playSong() {
+        SpotifyService spotify = getSpotifyService();
+
+    }
+
     /**
      * This function allows the user to log out from the DJ account when the "Log Out" button is
      * clicked
      *
      * @param view      View object that has actions performed when clicked on
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void onLogOutButtonClicked(final View view) {
-        openActivity(this, MainSignInActivity.class);
+//        Intent logoutIntent = new Intent(this, DJHomeActivity.class);
+//
+//        // makes sure user cannot navigate backwards anymore
+//        logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+//        startActivity(logoutIntent);
+
+        finishAffinity();
 
         // Code from: https://stackoverflow.com/questions/28998241/how-to-clear-cookies
         //      -and-cache-of-webview-on-android-when-not-in-webview
@@ -175,5 +197,36 @@ public class DJHomeActivity extends AppCompatActivity {
     private SimpleTrack getSimpleRoomTrack(Track track) {
         return new SimpleTrack(track.id, track.name, getArtistsAsString(track.artists)
                 , getTrackDuration(track.duration_ms), track.album.images.get(0).url);
+    }
+
+    @Override
+    public void onLoggedIn() {
+        ImageView playButton = (ImageView) findViewById(R.);
+    }
+
+    @Override
+    public void onLoggedOut() {
+    }
+
+    @Override
+    public void onLoginFailed(Error error) {
+    }
+
+    @Override
+    public void onTemporaryError() {
+    }
+
+    @Override
+    public void onConnectionMessage(String s) {
+    }
+
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+
+    }
+
+    @Override
+    public void onPlaybackError(Error error) {
+
     }
 }

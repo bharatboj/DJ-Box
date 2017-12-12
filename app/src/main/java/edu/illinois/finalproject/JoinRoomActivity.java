@@ -61,5 +61,4 @@ public class JoinRoomActivity extends AppCompatActivity {
         RoomAdapter roomAdapter = new RoomAdapter(this, rooms);
         roomList.setAdapter(roomAdapter);
     }
-
 }

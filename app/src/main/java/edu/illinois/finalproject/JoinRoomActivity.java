@@ -16,6 +16,8 @@ public class JoinRoomActivity extends AppCompatActivity {
 
     private ListView roomList;
     private Hashtable<String, Room> rooms;
+    private double myLat;
+    private double myLong;
 
     /**
      * This function sets up the activity
@@ -31,6 +33,15 @@ public class JoinRoomActivity extends AppCompatActivity {
         rooms = new Hashtable<>();
 
         displayListOfRooms();
+
+//        requestSingleUpdate(this,
+//                location -> {
+//                    CountDownLatch latch = new CountDownLatch(1);
+//                    myLat = location.latitude;
+//                    myLong = location.longitude;
+//                    latch.countDown();
+//                });
+
     }
 
     private void displayListOfRooms() {

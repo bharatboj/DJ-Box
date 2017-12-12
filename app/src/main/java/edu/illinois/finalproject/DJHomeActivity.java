@@ -4,22 +4,27 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.ToggleButton;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
+import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +38,8 @@ import static com.spotify.sdk.android.player.SpotifyPlayer.NotificationCallback;
 import static edu.illinois.finalproject.DJBoxUtils.getArtistsAsString;
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 import static edu.illinois.finalproject.DJBoxUtils.getTrackDuration;
-import static edu.illinois.finalproject.PlaylistAdapter.nDialog;
+import static edu.illinois.finalproject.MainSignInActivity.CLIENT_ID;
+import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
 
 public class DJHomeActivity extends AppCompatActivity implements
         NotificationCallback, ConnectionStateCallback {
@@ -42,6 +48,9 @@ public class DJHomeActivity extends AppCompatActivity implements
 
     private SparseArray<SimpleTrack> tracks;
     private Player mPlayer;
+    private SimpleTrack currTrack;
+    private int currentTrackPosMs;
+    private Handler mHandler;
 
     /**
      * This function sets up the activity
@@ -54,9 +63,6 @@ public class DJHomeActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dj_home);
 
-        // ends dialog once this activity is reached
-        nDialog.dismiss();
-
         songsList = (ListView) findViewById(R.id.lv_playlist_songs);
 
         Intent intent = getIntent();
@@ -68,6 +74,43 @@ public class DJHomeActivity extends AppCompatActivity implements
         addPlaylistTracksToDatabase(roomID, room);
 
         displaySongs(roomID);
+        currTrack = room.getPlaylist().get(0);
+        Config playerConfig = new Config(this, getAccessToken(), CLIENT_ID);
+        setPlayer();
+
+        playSong(currTrack);
+
+        ProgressBar songPositionBar = (ProgressBar) findViewById(R.id.pb_song_position);
+        songPositionBar.setMax(currTrack.getDurationMs());
+    }
+
+    private void setPlayer() {
+        Config playerConfig = new Config(this, getAccessToken(), CLIENT_ID);
+        Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(SpotifyPlayer spotifyPlayer) {
+                mPlayer = spotifyPlayer;
+                mPlayer.addConnectionStateCallback(DJHomeActivity.this);
+                mPlayer.addNotificationCallback(DJHomeActivity.this);
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+            }
+        });
+    }
+
+    private void playSong(SimpleTrack track) {
+        ToggleButton playButton = (ToggleButton) findViewById(R.id.play_button);
+        playButton.setOnCheckedChangeListener((compoundButton, isPaused) -> {
+            if (!isPaused) {
+                mPlayer.playUri(null, "spotify:track:" + track.getId(), 0, currentTrackPosMs);
+                currentTrackPosMs = (int) mPlayer.getPlaybackState().positionMs;
+            } else {
+                mPlayer.pause(null);
+            }
+        });
     }
 
     /**
@@ -146,11 +189,6 @@ public class DJHomeActivity extends AppCompatActivity implements
         songsList.setAdapter(playlistAdapter);
     }
 
-    private void playSong() {
-        SpotifyService spotify = getSpotifyService();
-
-    }
-
     /**
      * This function allows the user to log out from the DJ account when the "Log Out" button is
      * clicked
@@ -173,12 +211,11 @@ public class DJHomeActivity extends AppCompatActivity implements
         // Since a WebView is used, information about the user from previous use is always retined.
         // This allows to remove all cookies so the user is able to logout completely from the
         // application
-        CookieManager.getInstance().removeAllCookie();
+//        CookieManager.getInstance().removeAllCookie();
     }
 
     // code below from:
     // https://stackoverflow.com/questions/17008115/how-to-convert-a-sparsearray-to-arraylist
-
     /**
      * Returns a List of Objects of specified Type C
      *
@@ -196,37 +233,62 @@ public class DJHomeActivity extends AppCompatActivity implements
 
     private SimpleTrack getSimpleRoomTrack(Track track) {
         return new SimpleTrack(track.id, track.name, getArtistsAsString(track.artists)
-                , getTrackDuration(track.duration_ms), track.album.images.get(0).url);
+                , getTrackDuration(track.duration_ms), (int) track.duration_ms, track.album.images.get(0).url);
     }
 
     @Override
     public void onLoggedIn() {
-        ImageView playButton = (ImageView) findViewById(R.);
+        Log.d("DJHomeActivity", "User logged in");
+    }
+
+    @Override
+    protected void onDestroy() {
+        // VERY IMPORTANT! This must always be called or else you will leak resources
+        Spotify.destroyPlayer(this);
+        super.onDestroy();
     }
 
     @Override
     public void onLoggedOut() {
+        Log.d("DJHomeActivity", "User logged out");
     }
 
     @Override
     public void onLoginFailed(Error error) {
+        Log.d("DJHomeActivity", "Login failed");
     }
 
     @Override
     public void onTemporaryError() {
+        Log.d("DJHomeActivity", "Temporary error occurred");
     }
 
     @Override
-    public void onConnectionMessage(String s) {
+    public void onConnectionMessage(String message) {
+        Log.d("DJHomeActivity", "Received connection message: " + message);
     }
 
     @Override
     public void onPlaybackEvent(PlayerEvent playerEvent) {
-
+        Log.d("DJHomeActivity", "Playback event received: " + playerEvent.name());
+        switch (playerEvent) {
+            // Handle event type as necessary
+            default:
+                break;
+        }
     }
 
     @Override
     public void onPlaybackError(Error error) {
+        Log.d("DJHomeActivity", "Playback error received: " + error.name());
+        switch (error) {
+            // Handle error type as necessary
+            default:
+                break;
+        }
+    }
 
+    @Override
+    public void onBackPressed() {
     }
 }

@@ -72,7 +72,8 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistSimple> {
         // initialize all necessary playlist information to load into listView item views
         String playlistName = playlist.name;
         String playlistCreatorInfo = "Created by: " + playlist.owner.id;
-        String numTracksInPlaylist = playlist.tracks.total + " songs";
+        int totalNumTracks = playlist.tracks.total;
+        String numTracksInPlaylist = totalNumTracks + (totalNumTracks > 1 ? " songs" : " song");
         String playlistImageUrl = playlist.images.get(0).url;
 
         // populating each View with respective information
@@ -102,20 +103,22 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistSimple> {
             djHomeIntent.putExtra("roomID", roomID);
             djHomeIntent.putExtra("room", room);
             djHomeIntent.putExtra("playlist", playlist);
-            transitionToDJHome(context, djHomeIntent);
+
+            context.startActivity(djHomeIntent);
+//            transitionToDJHome(context, djHomeIntent);
         });
     }
 
-    private void transitionToDJHome(Context context, Intent intent) {
-        // loads up progress bar as it transitions to next activity
-        nDialog = new ProgressDialog(getContext());
-        nDialog.setMessage("Loading..");
-        nDialog.setTitle("Loading Party Playlist");
-        nDialog.setIndeterminate(false);
-        nDialog.setCancelable(true);
-        nDialog.show();
-
-        context.startActivity(intent);
-    }
+//    private void transitionToDJHome(Context context, Intent intent) {
+//        // loads up progress bar as it transitions to next activity
+//        nDialog = new ProgressDialog(getContext());
+//        nDialog.setMessage("Loading..");
+//        nDialog.setTitle("Loading Party Playlist");
+//        nDialog.setIndeterminate(false);
+//        nDialog.setCancelable(true);
+//        nDialog.show();
+//
+//        context.startActivity(intent);
+//    }
 
 }

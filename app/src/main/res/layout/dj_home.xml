@@ -59,20 +59,29 @@
             android:orientation="horizontal"
             android:padding="10dp">
 
-            <ImageView
+            <ToggleButton
                 android:id="@+id/play_button"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/play_button" />
+                android:background="@drawable/play_pause"
+                android:checked="true"
+                android:text=""
+                android:textOff=""
+                android:textOn=""/>
 
             <ProgressBar
+                android:id="@+id/pb_song_position"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:max="100"
-                android:progress="50"/>
+                android:layout_gravity="center_vertical" />
+
+            <ToggleButton
+                android:id="@+id/tv_fake"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"/>
         </LinearLayout>
     </LinearLayout>
 

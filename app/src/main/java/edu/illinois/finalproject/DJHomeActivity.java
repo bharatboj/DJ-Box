@@ -18,13 +18,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
-import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,8 +36,6 @@ import static com.spotify.sdk.android.player.SpotifyPlayer.NotificationCallback;
 import static edu.illinois.finalproject.DJBoxUtils.getArtistsAsString;
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 import static edu.illinois.finalproject.DJBoxUtils.getTrackDuration;
-import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
-import static edu.illinois.finalproject.SpotifyClient.CLIENT_ID;
 
 public class DJHomeActivity extends AppCompatActivity implements
         NotificationCallback, ConnectionStateCallback {
@@ -50,7 +45,6 @@ public class DJHomeActivity extends AppCompatActivity implements
     private HashMap<String, SimpleTrack> tracks;
     private List<String> sortedPlayOrderIDs;
     private List<SimpleTrack> sortedPlayOrderTracks;
-    private Player mPlayer;
     private String currTrackID;
     private int currentTrackPosMs;
     private Handler mHandler;
@@ -77,42 +71,14 @@ public class DJHomeActivity extends AppCompatActivity implements
         // Sets the title of the ActionBar for this activity to the name of the room (Party)
         setTitle(room.getName());
 
-        setTracks(room, playlist);
+        initializePartyPlaylist(room, playlist);
         addPlaylistTracksToDatabase(roomID, room);
+
+        ToggleButton playButton = (ToggleButton) findViewById(R.id.play_button);
 
         displaySongs(roomID);
         currTrackID = room.getCurrPlayingTrack();
-        setPlayer();
-
-        playSong(currTrackID);
-    }
-
-    private void setPlayer() {
-        Config playerConfig = new Config(this, getAccessToken(), CLIENT_ID);
-        Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-            @Override
-            public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                mPlayer = spotifyPlayer;
-                mPlayer.addConnectionStateCallback(DJHomeActivity.this);
-                mPlayer.addNotificationCallback(DJHomeActivity.this);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-            }
-        });
-    }
-
-    private void playSong(String trackID) {
-        ToggleButton playButton = (ToggleButton) findViewById(R.id.play_button);
-        playButton.setOnCheckedChangeListener((compoundButton, isPaused) -> {
-            if (!isPaused) {
-                mPlayer.playUri(null, "spotify:track:" + trackID, 0, currentTrackPosMs);
-                currentTrackPosMs = (int) mPlayer.getPlaybackState().positionMs;
-            } else {
-                mPlayer.pause(null);
-            }
-        });
+        DJBoxPlayerUtils.usePlayButtonToPlaySong(this, playButton, currTrackID);
     }
 
     /**
@@ -120,25 +86,32 @@ public class DJHomeActivity extends AppCompatActivity implements
      *
      * @param playlist      PlaylistSimple object to obtain PlaylistTrack objects from
      */
-    private void setTracks(Room room, PlaylistSimple playlist) {
-        String playlistOwnerID = playlist.owner.id;
-        String playlistID = playlist.id;
+    private void initializePartyPlaylist(Room room, PlaylistSimple playlist) {
         tracks = new HashMap<>();
 
+        // get SpotifyService object to allow to make API calls to Spotify
         SpotifyService spotify = getSpotifyService();
 
         // adds 100 Track objects within PlaylistSimple object to a List of Track objects
         // possible to add more, but decided that 100 is a reasonable limit for a playlist
         // that is going to be continuously edited during the party
+        String playlistOwnerID = playlist.owner.id;
+        String playlistID = playlist.id;
         List<PlaylistTrack> playlistTracks = spotify
                 .getPlaylistTracks(playlistOwnerID, playlistID).items;
-        for (int index = 0; index < playlistTracks.size(); index++) {
+
+        // set the current Playing track and next in queue track
+        Track currTrack = playlistTracks.get(0).track;
+        room.setCurrPlayingTrack(currTrack.id);
+        Track nextToPlayTrack = playlistTracks.get(1).track;
+        room.setNextToPlayTrack(nextToPlayTrack.id);
+        for (int index = 2; index < playlistTracks.size(); index++) {
             Track track = playlistTracks.get(index).track;
+            // add only the necessary parts of the track to use
             tracks.put(track.id, getSimpleTrack(track));
         }
 
-        sortedPlayOrderIDs = room.getSortedPlaylistIDs();
-        sortedPlayOrderTracks = room.getSortedPlaylistTracks();
+        room.setPlaylist(tracks);
     }
 
     /**
@@ -157,6 +130,11 @@ public class DJHomeActivity extends AppCompatActivity implements
     private void displaySongs(String roomID) {
         DatabaseReference playlistRef = FirebaseDatabase.getInstance()
                 .getReference("Rooms").child(roomID).child("playlist");
+
+        sortedPlayOrderIDs = room.getSortedPlaylistIDs();
+        sortedPlayOrderTracks = room.getSortedPlaylistTracks();
+        System.out.println(sortedPlayOrderIDs);
+        System.out.println(sortedPlayOrderTracks);
 
         updateQueue(roomID);
         SpotifyService spotify = getSpotifyService();
@@ -190,8 +168,8 @@ public class DJHomeActivity extends AppCompatActivity implements
 
     private void updateQueue(String roomID) {
         // Uses an Adapter to populate the ListView DJ Home with each PlaylistTrack
-//        DJSongAdapter playlistAdapter = new DJSongAdapter(this, roomID, sortedPlayOrderIDs, sortedPlayOrderTracks);
-//        songsList.setAdapter(playlistAdapter);
+        DJSongAdapter playlistAdapter = new DJSongAdapter(this, roomID, sortedPlayOrderIDs, sortedPlayOrderTracks);
+        songsList.setAdapter(playlistAdapter);
     }
 
     /**

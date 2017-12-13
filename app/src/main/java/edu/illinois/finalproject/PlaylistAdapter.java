@@ -34,7 +34,7 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistSimple> {
     }
 
     /**
-     * This constructor initializes fields
+     * This constructor initializes fields for PlaylistAdapter
      *
      * @param context       Context object representing context of calling activity
      * @param roomID        String representing the roomID of the room that was created

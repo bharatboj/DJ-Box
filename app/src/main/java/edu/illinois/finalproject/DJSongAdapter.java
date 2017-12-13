@@ -18,6 +18,10 @@ import java.util.List;
 // Used code from url below as reference:
 // https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
 public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
+    /**
+     * Inner class that represents a Holder of all the necessary
+     * Views to include in a Track item for DJ Home
+     */
     private static class DJSongViewHolder {
         ImageView songImageView;
         TextView nameTextView;
@@ -27,20 +31,42 @@ public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
         ToggleButton likeButton;
     }
 
-    DJSongAdapter(Context context, String roomID, List<SimpleTrack> tracks) {
+    /**
+     * This constructor initializes fields for DJSongAdapter by making call to superclass
+     *
+     * @param context       Context object representing context of calling activity
+     * @param tracks        List of SimpleTrack objects representing current tracks for room
+     */
+    DJSongAdapter(Context context, List<SimpleTrack> tracks) {
         super(context, R.layout.dj_home_song_item, tracks);
     }
 
+    /**
+     * ***JavaDoc below from: https://developer.android.com/reference/android/widget/
+     *    ArrayAdapter.html#getView(int, android.view.View, android.view.ViewGroup)***
+     *
+     * Get a View that displays the data at the specified position in the data set.
+     *
+     * @param pos           int: position of the item within the adapter's data set
+     *                      of the item whose view we want.
+     * @param itemView      View: the old view to reuse, if possible
+     * @param parent        ViewGroup: The parent that this view will eventually be attached to
+     *                      This value must never be null.
+     * @return              a View that displays the data at the specified position in the data set.
+     */
     @NonNull
     @Override
     public View getView(int pos, View itemView, @NonNull ViewGroup parent) {
         SimpleTrack track = getItem(pos);
 
+        // itemView may not be null, so it is good to initialize it only if necessary
         if (itemView == null) {
             itemView = LayoutInflater.from(getContext())
                     .inflate(R.layout.dj_home_song_item, parent, false);
         }
 
+        // initalize all the Views within DJSongViewHolder
+        // recycling view to reduce number of internal calls
         DJSongViewHolder viewHolder = new DJSongViewHolder();
         viewHolder.nameTextView = (TextView) itemView.findViewById(R.id.tv_song_name);
         viewHolder.artistsTextView = (TextView) itemView.findViewById(R.id.tv_artists);
@@ -54,7 +80,18 @@ public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
         return itemView;
     }
 
-    private void populateViews(DJSongViewHolder viewHolder, int pos, View itemView, SimpleTrack track) {
+    /**
+     * Populates each Track view in the ListView with respective attributes
+     *
+     * @param viewHolder    DJSongViewHolder object containing each of the playlist views
+     * @param pos           current position of View in ListView
+     * @param itemView      View object holding current PlaylistItem View object
+     * @param track         SimpleTrack object containing information about track itself
+     */
+    private void populateViews(DJSongViewHolder viewHolder, int pos,
+                               View itemView, SimpleTrack track) {
+
+        // populating each View with respective information
         viewHolder.nameTextView.setText(track.getName());
         viewHolder.artistsTextView.setText(track.getArtists());
         viewHolder.numLikesTextView.setText(track.getLikes().size());
@@ -79,7 +116,7 @@ public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
             itemView.setAlpha(1.0f);
         }
 
-        // load playlist image into PlaylistImageView only if playlist contains image,
+        // load track album image into DJ track ImageView only if playlist contains image,
         // else loads a default image Spotify normally uses
         String imageUrl = track.getImageUrl();
         Picasso.with(itemView.getContext()).load(imageUrl).into(viewHolder.songImageView);

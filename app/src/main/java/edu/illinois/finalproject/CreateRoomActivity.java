@@ -48,9 +48,6 @@ public class CreateRoomActivity extends AppCompatActivity {
         // initialize all room attributes to their respective variables
         String roomID = getNewRoomID();
         String djID = getSpotifyService().getMe().id;
-
-        // if user doesn't enter a name, then the DJ's username
-        // is used as room name because it is unique
         String roomName = roomNameEditText.getText().toString();
 
         // null for now. Once app gets more complicated, will add
@@ -59,8 +56,6 @@ public class CreateRoomActivity extends AppCompatActivity {
         Double longitude = null;
 
         // if a password exists, then access is set to private, else it's defaulted to public
-        // Note: if user decides to not click any button, it is assumed to be public
-        // if password is not set to anything,
         String pass = passwordEditText.getText().toString();
         String access;
         if (!pass.isEmpty()) {
@@ -86,17 +81,16 @@ public class CreateRoomActivity extends AppCompatActivity {
                 String emptyNameText = "Please enter a name.";
                 Toast.makeText(this, emptyNameText, Toast.LENGTH_SHORT).show();
             }
-        } else if (!roomName.isEmpty()) {
-            // if user did not check a radio button
-            if (!privateButton.isChecked() && !publicButton.isChecked()) {
-                String emptyFormText = "Please select access.";
-                Toast.makeText(this, emptyFormText, Toast.LENGTH_SHORT).show();
-            }
-            // if user selected "Private" access but did not enter a password
-            else if (passwordEditText.isEnabled() && pass == null) {
-                String badAccessText = "Please enter a password.";
-                Toast.makeText(this, badAccessText, Toast.LENGTH_SHORT).show();
-            }
+        }
+        // if user did not check a radio button
+        else if (!roomName.isEmpty() && !privateButton.isChecked() && !publicButton.isChecked()) {
+            String emptyFormText = "Please select access.";
+            Toast.makeText(this, emptyFormText, Toast.LENGTH_SHORT).show();
+        }
+        // if user selected "Private" access but did not enter a password
+        else if (!roomName.isEmpty() && passwordEditText.isEnabled() && pass == null) {
+            String badAccessText = "Please enter a password.";
+            Toast.makeText(this, badAccessText, Toast.LENGTH_SHORT).show();
         }
         // if successfully created room
         else {

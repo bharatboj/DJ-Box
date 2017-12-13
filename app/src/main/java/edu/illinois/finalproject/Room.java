@@ -76,7 +76,6 @@ class Room implements Parcelable {
     }
 
     public ArrayList<SimpleTrack> getSortedPlaylistTracks() {
-
         ArrayList<SimpleTrack> tracks = new ArrayList<>(getSortedFutureSwappedPlaylist().keySet());
 
         tracks.add(0, this.playlist.get(nextToPlayTrack));
@@ -86,7 +85,6 @@ class Room implements Parcelable {
     }
 
     public ArrayList<String> getSortedPlaylistIDs() {
-
         ArrayList<String> trackIDs = new ArrayList<>(getSortedFutureSwappedPlaylist().values());
 
         trackIDs.add(0, nextToPlayTrack);
@@ -96,7 +94,6 @@ class Room implements Parcelable {
     }
 
     private TreeMap<SimpleTrack, String> getSortedFutureSwappedPlaylist() {
-
         Map<String, SimpleTrack> futureTracks = new HashMap<>(this.playlist);
         futureTracks.remove(currPlayingTrack);
         futureTracks.remove(nextToPlayTrack);

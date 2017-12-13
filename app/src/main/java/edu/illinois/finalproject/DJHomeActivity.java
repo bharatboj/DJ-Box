@@ -190,8 +190,8 @@ public class DJHomeActivity extends AppCompatActivity implements
 
     private void updateQueue(String roomID) {
         // Uses an Adapter to populate the ListView DJ Home with each PlaylistTrack
-        DJSongAdapter playlistAdapter = new DJSongAdapter(this, roomID, sortedPlayOrderIDs, sortedPlayOrderTracks);
-        songsList.setAdapter(playlistAdapter);
+//        DJSongAdapter playlistAdapter = new DJSongAdapter(this, roomID, sortedPlayOrderIDs, sortedPlayOrderTracks);
+//        songsList.setAdapter(playlistAdapter);
     }
 
     /**

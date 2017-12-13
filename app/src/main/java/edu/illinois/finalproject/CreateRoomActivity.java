@@ -74,13 +74,30 @@ public class CreateRoomActivity extends AppCompatActivity {
 
         // if user did not enter a name
         if (roomName.isEmpty()) {
-            String emptyNameText = "Please enter a name.";
-            Toast.makeText(this, emptyNameText, Toast.LENGTH_LONG).show();
-        }
-        // if user selected "Private" access but did not enter a password
-        else if (passwordEditText.isEnabled() && pass == null) {
-            String badAccessText = "Please enter a password.";
-            Toast.makeText(this, badAccessText, Toast.LENGTH_LONG).show();
+            // if user did not also check a radioButton
+            if (!privateButton.isChecked() && !publicButton.isChecked()) {
+                String emptyFormText = "Please enter a name and select access.";
+                Toast.makeText(this, emptyFormText, Toast.LENGTH_SHORT).show();
+            }
+            // if user did not also enter a password
+            else if (passwordEditText.isEnabled() && pass == null) {
+                String badAccessNoNameText = "Please enter a name and enter a password.";
+                Toast.makeText(this, badAccessNoNameText, Toast.LENGTH_SHORT).show();
+            } else {
+                String emptyNameText = "Please enter a name.";
+                Toast.makeText(this, emptyNameText, Toast.LENGTH_SHORT).show();
+            }
+        } else if (!roomName.isEmpty()) {
+            // if user did not check a radio button
+            if (!privateButton.isChecked() && !publicButton.isChecked()) {
+                String emptyFormText = "Please select access.";
+                Toast.makeText(this, emptyFormText, Toast.LENGTH_SHORT).show();
+            }
+            // if user selected "Private" access but did not enter a password
+            else if (passwordEditText.isEnabled() && pass == null) {
+                String badAccessText = "Please enter a password.";
+                Toast.makeText(this, badAccessText, Toast.LENGTH_SHORT).show();
+            }
         }
         // if successfully created room
         else {
@@ -99,12 +116,12 @@ public class CreateRoomActivity extends AppCompatActivity {
      */
     private void goToSelectPlaylistPage(View view, String roomID, Room room) {
         final Context context = view.getContext();
-        Intent audienceHomeIntent = new Intent(context, SelectPlaylistActivity.class);
+        Intent selectPlaylistIntent = new Intent(context, SelectPlaylistActivity.class);
 
         // pass the roomID and room to the next activity
-        audienceHomeIntent.putExtra("roomID", roomID);
-        audienceHomeIntent.putExtra("room", room);
-        context.startActivity(audienceHomeIntent);
+        selectPlaylistIntent.putExtra("roomID", roomID);
+        selectPlaylistIntent.putExtra("room", room);
+        context.startActivity(selectPlaylistIntent);
     }
 
     /**
@@ -142,5 +159,12 @@ public class CreateRoomActivity extends AppCompatActivity {
         publicButton.setChecked(true);
         privateButton.setChecked(false);
         passwordEditText.setEnabled(false);
+    }
+
+    /**
+     * Disables back button on Android so user cannot go to previous activity
+     */
+    @Override
+    public void onBackPressed() {
     }
 }

@@ -1,6 +1,5 @@
 package edu.illinois.finalproject;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -20,10 +19,8 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 // Used code from url below as reference:
 // https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
 public class PlaylistAdapter extends ArrayAdapter<PlaylistSimple> {
-
     private String roomID;
     private Room room;
-    static ProgressDialog nDialog;
 
     private static class PlaylistViewHolder {
         TextView nameTextView;

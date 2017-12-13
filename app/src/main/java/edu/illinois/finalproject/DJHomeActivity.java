@@ -9,8 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.ToggleButton;
 
 import com.google.firebase.database.ChildEventListener;
@@ -27,6 +27,7 @@ import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -35,7 +36,9 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 
 import static com.spotify.sdk.android.player.SpotifyPlayer.NotificationCallback;
+import static edu.illinois.finalproject.DJBoxUtils.getArtistsAsString;
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
+import static edu.illinois.finalproject.DJBoxUtils.getTrackDuration;
 import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
 import static edu.illinois.finalproject.SpotifyClient.CLIENT_ID;
 
@@ -44,9 +47,11 @@ public class DJHomeActivity extends AppCompatActivity implements
 
     private ListView songsList;
 
-    private SparseArray<SimpleTrack> tracks;
+    private HashMap<String, SimpleTrack> tracks;
+    private List<String> sortedPlayOrderIDs;
+    private List<SimpleTrack> sortedPlayOrderTracks;
     private Player mPlayer;
-    private SimpleTrack currTrack;
+    private String currTrackID;
     private int currentTrackPosMs;
     private Handler mHandler;
 
@@ -63,6 +68,7 @@ public class DJHomeActivity extends AppCompatActivity implements
 
         songsList = (ListView) findViewById(R.id.lv_playlist_songs);
 
+        // get room, roomID, and playlist that was passed through the intents
         Intent intent = getIntent();
         String roomID = intent.getStringExtra("roomID");
         Room room = intent.getParcelableExtra("room");
@@ -71,18 +77,14 @@ public class DJHomeActivity extends AppCompatActivity implements
         // Sets the title of the ActionBar for this activity to the name of the room (Party)
         setTitle(room.getName());
 
-        setTracks(playlist);
+        setTracks(room, playlist);
         addPlaylistTracksToDatabase(roomID, room);
 
         displaySongs(roomID);
-//        currTrack = room.getPlaylist().get(0);
-        Config playerConfig = new Config(this, getAccessToken(), CLIENT_ID);
+        currTrackID = room.getCurrPlayingTrack();
         setPlayer();
 
-        playSong(currTrack);
-
-        ProgressBar songPositionBar = (ProgressBar) findViewById(R.id.pb_song_position);
-        songPositionBar.setMax(currTrack.getDurationMs());
+        playSong(currTrackID);
     }
 
     private void setPlayer() {
@@ -93,7 +95,6 @@ public class DJHomeActivity extends AppCompatActivity implements
                 mPlayer = spotifyPlayer;
                 mPlayer.addConnectionStateCallback(DJHomeActivity.this);
                 mPlayer.addNotificationCallback(DJHomeActivity.this);
-
             }
 
             @Override
@@ -102,11 +103,11 @@ public class DJHomeActivity extends AppCompatActivity implements
         });
     }
 
-    private void playSong(SimpleTrack track) {
+    private void playSong(String trackID) {
         ToggleButton playButton = (ToggleButton) findViewById(R.id.play_button);
         playButton.setOnCheckedChangeListener((compoundButton, isPaused) -> {
             if (!isPaused) {
-//                mPlayer.playUri(null, "spotify:track:" + track.getId(), 0, currentTrackPosMs);
+                mPlayer.playUri(null, "spotify:track:" + trackID, 0, currentTrackPosMs);
                 currentTrackPosMs = (int) mPlayer.getPlaybackState().positionMs;
             } else {
                 mPlayer.pause(null);
@@ -119,10 +120,10 @@ public class DJHomeActivity extends AppCompatActivity implements
      *
      * @param playlist      PlaylistSimple object to obtain PlaylistTrack objects from
      */
-    private void setTracks(PlaylistSimple playlist) {
+    private void setTracks(Room room, PlaylistSimple playlist) {
         String playlistOwnerID = playlist.owner.id;
         String playlistID = playlist.id;
-        tracks = new SparseArray<>();
+        tracks = new HashMap<>();
 
         SpotifyService spotify = getSpotifyService();
 
@@ -133,8 +134,11 @@ public class DJHomeActivity extends AppCompatActivity implements
                 .getPlaylistTracks(playlistOwnerID, playlistID).items;
         for (int index = 0; index < playlistTracks.size(); index++) {
             Track track = playlistTracks.get(index).track;
-//            tracks.put(index, getSimpleRoomTrack(track));
+            tracks.put(track.id, getSimpleTrack(track));
         }
+
+        sortedPlayOrderIDs = room.getSortedPlaylistIDs();
+        sortedPlayOrderTracks = room.getSortedPlaylistTracks();
     }
 
     /**
@@ -145,7 +149,7 @@ public class DJHomeActivity extends AppCompatActivity implements
     private void addPlaylistTracksToDatabase(String roomID, Room room) {
         // add a playlist containing the songIDs in the
         // respective room and updates Firebase room values
-//        room.setPlaylist(asList(tracks));
+        room.setPlaylist(tracks);
         FirebaseDatabase.getInstance().getReference("Rooms")
                 .child(roomID).setValue(room);
     }
@@ -166,7 +170,7 @@ public class DJHomeActivity extends AppCompatActivity implements
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 String trackID = dataSnapshot.getValue(String.class);
                 Track track = spotify.getTrack(trackID);
-//                tracks.put(Integer.parseInt(dataSnapshot.getKey()), getSimpleRoomTrack(track));
+                tracks.put(track.id, getSimpleTrack(track));
                 updateQueue(roomID);
             }
 
@@ -186,8 +190,8 @@ public class DJHomeActivity extends AppCompatActivity implements
 
     private void updateQueue(String roomID) {
         // Uses an Adapter to populate the ListView DJ Home with each PlaylistTrack
-//        DJSongAdapter playlistAdapter = new DJSongAdapter(this, roomID, asList(tracks));
-//        songsList.setAdapter(playlistAdapter);
+        DJSongAdapter playlistAdapter = new DJSongAdapter(this, roomID, sortedPlayOrderIDs, sortedPlayOrderTracks);
+        songsList.setAdapter(playlistAdapter);
     }
 
     /**
@@ -198,11 +202,11 @@ public class DJHomeActivity extends AppCompatActivity implements
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void onLogOutButtonClicked(final View view) {
-//        Intent logoutIntent = new Intent(this, DJHomeActivity.class);
-//
-//        // makes sure user cannot navigate backwards anymore
-//        logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-//        startActivity(logoutIntent);
+        Intent logoutIntent = new Intent(this, DJHomeActivity.class);
+
+        // makes sure user cannot navigate backwards anymore
+        logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        startActivity(logoutIntent);
 
         finishAffinity();
 
@@ -212,7 +216,7 @@ public class DJHomeActivity extends AppCompatActivity implements
         // Since a WebView is used, information about the user from previous use is always retined.
         // This allows to remove all cookies so the user is able to logout completely from the
         // application
-//        CookieManager.getInstance().removeAllCookie();
+        CookieManager.getInstance().removeAllCookie();
     }
 
     // code below from:
@@ -232,11 +236,11 @@ public class DJHomeActivity extends AppCompatActivity implements
         return arrayList;
     }
 
-//    private SimpleTrack getSimpleRoomTrack(Track track) {
-//        return new SimpleTrack(track.id, track.name, getArtistsAsString(track.artists)
-//                , getTrackDuration(track.duration_ms), (int) track.duration_ms, new HashMap<>()
-//                , track.album.images.get(0).url);
-//    }
+    private SimpleTrack getSimpleTrack(Track track) {
+        return new SimpleTrack(track.name, getArtistsAsString(track.artists)
+                , getTrackDuration(track.duration_ms), (int) track.duration_ms, 0,
+                new HashMap<>(), track.album.images.get(0).url);
+    }
 
     @Override
     public void onLoggedIn() {

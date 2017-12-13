@@ -13,12 +13,14 @@ import android.widget.ToggleButton;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
     private String roomID;
     private String userID;
+    private List<String> trackIDs;
 
     private static class AudienceSongViewHolder {
         ImageView songImageView;
@@ -36,11 +38,13 @@ public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
         // initialize fields with values passed in teh constructor
         this.roomID = roomID;
         this.userID = userID;
+        this.trackIDs = trackIDs;
     }
 
     @NonNull
     @Override
     public View getView(int pos, View itemView, @NonNull ViewGroup parent) {
+        String trackID = trackIDs.get(pos);
         SimpleTrack track = getItem(pos);
 
         if (itemView == null) {
@@ -55,16 +59,18 @@ public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
         viewHolder.songImageView = (ImageView) itemView.findViewById(R.id.iv_song_aud);
         viewHolder.likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite_aud);
 
-//        populateViews(viewHolder, pos, itemView, track);
-//        updateLikesOnClick(viewHolder, pos, itemView);
+        populateViews(viewHolder, pos, itemView, track);
+        updateLikesOnClick(viewHolder, itemView, trackID);
 
         return itemView;
     }
 
-    private void populateViews(AudienceSongViewHolder viewHolder, int pos, View itemView, SimpleTrack track) {
-//        viewHolder.nameTextView.setText(track.getName());
-//        viewHolder.artistsTextView.setText(track.getArtists());
-//        viewHolder.numLikesTextView.setText(String.valueOf(track.getLikesCount()));
+    private void populateViews(AudienceSongViewHolder viewHolder, int pos,
+                               View itemView, SimpleTrack track) {
+
+        viewHolder.nameTextView.setText(track.getName());
+        viewHolder.artistsTextView.setText(track.getArtists());
+        viewHolder.numLikesTextView.setText(String.valueOf(track.getLikesCount()));
 
         if (pos == 0) {
             itemView.setBackgroundColor(Color.rgb(188, 207, 221));
@@ -84,14 +90,16 @@ public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
 
         // load playlist image into PlaylistImageView only if playlist contains image,
         // else loads a default image Spotify normally uses
-//        String imageUrl = track.getImageUrl();
-//        Picasso.with(itemView.getContext()).load(imageUrl).into(viewHolder.songImageView);
+        String imageUrl = track.getImageUrl();
+        Picasso.with(itemView.getContext()).load(imageUrl).into(viewHolder.songImageView);
     }
 
-    private void updateLikesOnClick(AudienceSongViewHolder viewHolder, View itemView) {
+    private void updateLikesOnClick(AudienceSongViewHolder viewHolder,
+                                    View itemView, String trackID) {
+
         DatabaseReference userLikeRef = FirebaseDatabase.getInstance()
                 .getReference("Rooms").child(roomID).child("playlist")
-                .child("likedBy").child("userID");
+                .child(trackID).child("likedBy").child(userID);
         ToggleButton likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite_aud);
 
         likeButton.setOnCheckedChangeListener((compoundButton, isLiked) -> {

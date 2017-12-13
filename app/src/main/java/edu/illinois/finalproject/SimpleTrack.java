@@ -29,13 +29,13 @@ class SimpleTrack implements Parcelable, Comparable {
     }
 
     SimpleTrack(String name, String artists, String duration, int durationMs
-            , int likesCount, HashMap<String, Boolean> likes, String imageUrl) {
+            , int likesCount, HashMap<String, Boolean> likedBy, String imageUrl) {
         this.name = name;
         this.artists = artists;
         this.duration = duration;
         this.durationMs = durationMs;
         this.likesCount = likesCount;
-        this.likedBy = likes;
+        this.likedBy = likedBy;
         this.imageUrl = imageUrl;
     }
 

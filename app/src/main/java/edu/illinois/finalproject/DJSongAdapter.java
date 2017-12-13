@@ -18,8 +18,6 @@ import java.util.List;
 // Used code from url below as reference:
 // https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
 public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
-    private String roomID;
-
     private static class DJSongViewHolder {
         ImageView songImageView;
         TextView nameTextView;
@@ -29,10 +27,8 @@ public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
         ToggleButton likeButton;
     }
 
-    DJSongAdapter(Context context, String roomID, List<SimpleTrack> songs) {
-        super(context, R.layout.dj_home_song_item, songs);
-
-        this.roomID = roomID;
+    DJSongAdapter(Context context, String roomID, List<SimpleTrack> tracks) {
+        super(context, R.layout.dj_home_song_item, tracks);
     }
 
     @NonNull

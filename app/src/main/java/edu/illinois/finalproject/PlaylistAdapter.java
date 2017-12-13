@@ -62,10 +62,10 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistSimple> {
     }
 
     /**
-     * Populates each Playlist view in the ListView with respective attributes
+     * Populates each PlaylistItem view in the ListView with respective attributes
      *
      * @param viewHolder    PlaylistViewHolder object containing each of the playlist views
-     * @param itemView      View object holding current Playlist View object
+     * @param itemView      View object holding current PlaylistItem View object
      * @param playlist      PlaylistSimple object containing information about playlist itself
      */
     private void populateViews(PlaylistViewHolder viewHolder, View itemView, PlaylistSimple playlist) {
@@ -113,7 +113,7 @@ public class PlaylistAdapter extends ArrayAdapter<PlaylistSimple> {
 //        // loads up progress bar as it transitions to next activity
 //        nDialog = new ProgressDialog(getContext());
 //        nDialog.setMessage("Loading..");
-//        nDialog.setTitle("Loading Party Playlist");
+//        nDialog.setTitle("Loading Party PlaylistItem");
 //        nDialog.setIndeterminate(false);
 //        nDialog.setCancelable(true);
 //        nDialog.show();

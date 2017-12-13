@@ -9,16 +9,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import static edu.illinois.finalproject.RoomAdapter.alertDialog;
 
 public class AudienceHomeActivity extends AppCompatActivity {
 
     private ListView songsList;
-    private List<SimpleTrack> tracks;
+    private String userID;
 
     /**
      * This function sets up the activity
@@ -30,15 +31,21 @@ public class AudienceHomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.audience_home);
 
+        // make sure the alert dialog ends once activity reaches
+        alertDialog.dismiss();
+
         // gets Room and Room ID that was passed through the intent
         Intent intent = getIntent();
         Room room = intent.getParcelableExtra("room");
         String roomID = intent.getStringExtra("roomID");
 
-        // Sets the title of the ActionBar for this activity to the name of the room (Party)
+        // sets the title of the ActionBar for this activity to the name of the room (Party)
         setTitle(room.getName());
 
+        // initialize fields
         songsList = (ListView) findViewById(R.id.lv_playlist_songs_aud);
+        // set a unique userID for user
+        userID = UUID.randomUUID().toString();
 
         displaySongs(roomID);
     }
@@ -49,21 +56,14 @@ public class AudienceHomeActivity extends AppCompatActivity {
      * @param roomID    String representing the id of the room
      */
     private void displaySongs(String roomID) {
-        DatabaseReference playlistRef = FirebaseDatabase.getInstance()
-                .getReference("Rooms").child(roomID).child("playlist");
-        Query topSongs = playlistRef.orderByChild("likes");
+        DatabaseReference roomRef = FirebaseDatabase.getInstance()
+                .getReference("Rooms").child(roomID);
 
         // updates the current playlist every time there's a change in the playlist list of tracks
-        topSongs.addValueEventListener(new ValueEventListener() {
+        roomRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot playlistSnapshot) {
-                // clear tracks each time
-                tracks = new ArrayList<>();
-                for (DataSnapshot track : playlistSnapshot.getChildren()) {
-                    // pulls all the relevant information about the track and adds to tracks list
-                    tracks.add(track.getValue(SimpleTrack.class));
-                }
-                populateListOfTracks(roomID);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                updateTracks(roomID, dataSnapshot);
             }
 
             @Override
@@ -73,13 +73,29 @@ public class AudienceHomeActivity extends AppCompatActivity {
     }
 
     /**
-     * Populates the List of tracks View with the new set of tracks
+     * Updates all current tracks and populates ListView with new set of tracks
      *
-     * @param roomID    String representing the id of the room
+     * @param roomSnapshot    DataSnapshot object representing the playlist of a particular room
      */
-    private void populateListOfTracks(String roomID) {
-        AudienceSongAdapter playlistAdapter = new AudienceSongAdapter(this, roomID, tracks);
+    private void updateTracks(String roomID, DataSnapshot roomSnapshot) {
+        // sorts all tracks except 1st two by number of likes
+        // the first two don't get sorted because they contain currently
+        // playing track and queued track
+        Room updatedRoom = roomSnapshot.getValue(Room.class);
+        List<String> sortedPlayOrderIDs = updatedRoom.getSortedPlaylistIDs();
+        List<SimpleTrack> sortedPlayOrderTracks = updatedRoom.getSortedPlaylistTracks();
+
+        // populate the List of tracks View with the new set of tracks
+        AudienceSongAdapter playlistAdapter = new AudienceSongAdapter(this, roomID, userID,
+                sortedPlayOrderIDs, sortedPlayOrderTracks);
         songsList.setAdapter(playlistAdapter);
+    }
+
+    /**
+     * Makes sure that the user cannot navigate back anymore once user reaches this activity
+     */
+    @Override
+    public void onBackPressed() {
     }
 
 }

@@ -3,40 +3,24 @@ package edu.illinois.finalproject;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashMap;
+
 public class PlaylistItem implements Parcelable {
-    private String name;
-    private String owner;
-    private String info;
-    private String imageUrl;
+    private HashMap<String, SimpleTrack> playlist;
+
+    PlaylistItem() {
+    }
 
     private PlaylistItem(Parcel in) {
-        this.name = in.readString();
-        this.owner = in.readString();
-        this.info = in.readString();
-        this.imageUrl = in.readString();
+        this.playlist = (HashMap<String, SimpleTrack>) in.readSerializable();
     }
 
-    PlaylistItem(String name, String owner, String info, String imageUrl) {
-        this.name = name;
-        this.owner = owner;
-        this.info = info;
-        this.imageUrl = imageUrl;
+    public PlaylistItem(HashMap<String, SimpleTrack> playlist) {
+        this.playlist = playlist;
     }
 
-    String getName() {
-        return name;
-    }
-
-    String getOwner() {
-        return owner;
-    }
-
-    String getInfo() {
-        return info;
-    }
-
-    String getImageUrl() {
-        return imageUrl;
+    public HashMap<String, SimpleTrack> getPlaylist() {
+        return playlist;
     }
 
     @Override
@@ -46,10 +30,7 @@ public class PlaylistItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.name);
-        dest.writeString(this.owner);
-        dest.writeString(this.info);
-        dest.writeString(this.imageUrl);
+        dest.writeSerializable(this.playlist);
     }
 
     public static final Creator<PlaylistItem> CREATOR = new Creator<PlaylistItem>() {

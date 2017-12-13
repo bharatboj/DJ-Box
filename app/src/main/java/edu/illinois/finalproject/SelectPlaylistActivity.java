@@ -47,8 +47,9 @@ public class SelectPlaylistActivity extends AppCompatActivity {
         // get SpotifyService to make API calls
         SpotifyService spotify = getSpotifyService();
 
+        final int minNumTracks = 10;
         List<PlaylistSimple> playlists = spotify.getMyPlaylists().items;
-        playlists.removeIf(playlist -> playlist.tracks.total == 0);
+        playlists.removeIf(playlist -> playlist.tracks.total < minNumTracks);
 
         // Uses an Adapter to populate the ListView playlistList with each PlaylistSimpleObject
         PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, roomID, room, playlists);

@@ -11,14 +11,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.squareup.picasso.Picasso;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
-import static edu.illinois.finalproject.DJBoxUtils.getNumLikesForSong;
-
 public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
     private String roomID;
+    private String userID;
 
     private static class AudienceSongViewHolder {
         ImageView songImageView;
@@ -28,10 +28,14 @@ public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
         ToggleButton likeButton;
     }
 
-    AudienceSongAdapter(Context context, String roomID, List<SimpleTrack> songs) {
-        super(context, R.layout.audience_home_song_item, songs);
+    AudienceSongAdapter(Context context, String roomID, String userID,
+                        List<String> trackIDs, List<SimpleTrack> tracks) {
 
+        super(context, R.layout.audience_home_song_item, tracks);
+
+        // initialize fields with values passed in teh constructor
         this.roomID = roomID;
+        this.userID = userID;
     }
 
     @NonNull
@@ -51,15 +55,16 @@ public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
         viewHolder.songImageView = (ImageView) itemView.findViewById(R.id.iv_song_aud);
         viewHolder.likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite_aud);
 
-        populateViews(viewHolder, pos, itemView, track);
+//        populateViews(viewHolder, pos, itemView, track);
+//        updateLikesOnClick(viewHolder, pos, itemView);
 
         return itemView;
     }
 
     private void populateViews(AudienceSongViewHolder viewHolder, int pos, View itemView, SimpleTrack track) {
-        viewHolder.nameTextView.setText(track.getName());
-        viewHolder.artistsTextView.setText(track.getArtists());
-        viewHolder.numLikesTextView.setText(String.valueOf(getNumLikesForSong(roomID, track.getId())));
+//        viewHolder.nameTextView.setText(track.getName());
+//        viewHolder.artistsTextView.setText(track.getArtists());
+//        viewHolder.numLikesTextView.setText(String.valueOf(track.getLikesCount()));
 
         if (pos == 0) {
             itemView.setBackgroundColor(Color.rgb(188, 207, 221));
@@ -79,7 +84,25 @@ public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
 
         // load playlist image into PlaylistImageView only if playlist contains image,
         // else loads a default image Spotify normally uses
-        String imageUrl = track.getImageUrl();
-        Picasso.with(itemView.getContext()).load(imageUrl).into(viewHolder.songImageView);
+//        String imageUrl = track.getImageUrl();
+//        Picasso.with(itemView.getContext()).load(imageUrl).into(viewHolder.songImageView);
+    }
+
+    private void updateLikesOnClick(AudienceSongViewHolder viewHolder, View itemView) {
+        DatabaseReference userLikeRef = FirebaseDatabase.getInstance()
+                .getReference("Rooms").child(roomID).child("playlist")
+                .child("likedBy").child("userID");
+        ToggleButton likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite_aud);
+
+        likeButton.setOnCheckedChangeListener((compoundButton, isLiked) -> {
+            int currNumLikes = Integer.parseInt(viewHolder.numLikesTextView.getText().toString());
+            if (isLiked) {
+                userLikeRef.setValue(true);
+                viewHolder.numLikesTextView.setText(String.valueOf(currNumLikes + 1));
+            } else {
+                userLikeRef.removeValue();
+                viewHolder.numLikesTextView.setText(String.valueOf(currNumLikes - 1));
+            }
+        });
     }
 }

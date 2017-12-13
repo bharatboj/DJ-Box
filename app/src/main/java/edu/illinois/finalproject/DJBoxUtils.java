@@ -183,11 +183,11 @@ class DJBoxUtils extends AppCompatActivity {
             // gets values of "PlaylistItem" snapshot as an Arraylist of Strings to represent the songs
             // in the playlist
             List<String> playlist =
-                    getSnapshotValsList(roomsSnapshot.child(roomID).child("Playlist"));
+                    getSnapshotValsList(roomsSnapshot.child(roomID).child("PlaylistItem"));
 
             // adds song to "PlaylistItem" if it does not exist there already
             if (!playlist.contains(spotifyID)) {
-                roomRef.child("Playlist").child(String.valueOf(numSongsInPlaylist))
+                roomRef.child("PlaylistItem").child(String.valueOf(numSongsInPlaylist))
                         .setValue(spotifyID);
             }
 
@@ -284,7 +284,7 @@ class DJBoxUtils extends AppCompatActivity {
 
 //    static void updateSongs(ListView listView, User userType, Context context) {
 //
-////                for (DataSnapshot trackSnap : roomSnapshot.child("Playlist").getChildren()) {
+////                for (DataSnapshot trackSnap : roomSnapshot.child("PlaylistItem").getChildren()) {
 ////                    String trackID = trackSnap.getValue(String.class);
 ////                    Track track = spotify.getTrack(trackID);
 ////                    int numLikesForTrack = getNumLikesForSong(roomSnapshot, trackID);
@@ -326,15 +326,15 @@ class DJBoxUtils extends AppCompatActivity {
 //    }
 
 //    static void displaySongs(ListView listView, User userType, Context context) {
-//        List<SimpleTrack> songItems = new ArrayList<>();
+//        List<d> songItems = new ArrayList<>();
 //
 //        for (Track track : songs.keySet()) {
-//            songItems.add(new SimpleTrack(track.id, track.name, getArtistsAsString(track.artists)
+//            songItems.add(new d(track.id, track.name, getArtistsAsString(track.artists)
 //                    , getDurationAsString(track.duration_ms), songs.get(track)
 //                    , track.album.images.get(0).url));
 //        }
 //
-//        ArrayAdapter<SimpleTrack> songAdapter;
+//        ArrayAdapter<d> songAdapter;
 //        if (userType == User.DISC_JOCKEY)
 //            songAdapter = new DJSongAdapter(context, songItems);
 //        else {
@@ -397,4 +397,6 @@ class DJBoxUtils extends AppCompatActivity {
 
         return durationInMins + ":" + ((durationInSecs < 10) ? ("0" + durationInSecs) : durationInSecs);
     }
+
+
 }

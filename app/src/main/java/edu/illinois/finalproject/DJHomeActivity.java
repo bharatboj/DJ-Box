@@ -35,9 +35,7 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 
 import static com.spotify.sdk.android.player.SpotifyPlayer.NotificationCallback;
-import static edu.illinois.finalproject.DJBoxUtils.getArtistsAsString;
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
-import static edu.illinois.finalproject.DJBoxUtils.getTrackDuration;
 import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
 import static edu.illinois.finalproject.SpotifyClient.CLIENT_ID;
 
@@ -77,7 +75,7 @@ public class DJHomeActivity extends AppCompatActivity implements
         addPlaylistTracksToDatabase(roomID, room);
 
         displaySongs(roomID);
-        currTrack = room.getPlaylist().get(0);
+//        currTrack = room.getPlaylist().get(0);
         Config playerConfig = new Config(this, getAccessToken(), CLIENT_ID);
         setPlayer();
 
@@ -108,7 +106,7 @@ public class DJHomeActivity extends AppCompatActivity implements
         ToggleButton playButton = (ToggleButton) findViewById(R.id.play_button);
         playButton.setOnCheckedChangeListener((compoundButton, isPaused) -> {
             if (!isPaused) {
-                mPlayer.playUri(null, "spotify:track:" + track.getId(), 0, currentTrackPosMs);
+//                mPlayer.playUri(null, "spotify:track:" + track.getId(), 0, currentTrackPosMs);
                 currentTrackPosMs = (int) mPlayer.getPlaybackState().positionMs;
             } else {
                 mPlayer.pause(null);
@@ -135,7 +133,7 @@ public class DJHomeActivity extends AppCompatActivity implements
                 .getPlaylistTracks(playlistOwnerID, playlistID).items;
         for (int index = 0; index < playlistTracks.size(); index++) {
             Track track = playlistTracks.get(index).track;
-            tracks.put(index, getSimpleRoomTrack(track));
+//            tracks.put(index, getSimpleRoomTrack(track));
         }
     }
 
@@ -147,7 +145,7 @@ public class DJHomeActivity extends AppCompatActivity implements
     private void addPlaylistTracksToDatabase(String roomID, Room room) {
         // add a playlist containing the songIDs in the
         // respective room and updates Firebase room values
-        room.setPlaylist(asList(tracks));
+//        room.setPlaylist(asList(tracks));
         FirebaseDatabase.getInstance().getReference("Rooms")
                 .child(roomID).setValue(room);
     }
@@ -168,7 +166,7 @@ public class DJHomeActivity extends AppCompatActivity implements
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 String trackID = dataSnapshot.getValue(String.class);
                 Track track = spotify.getTrack(trackID);
-                tracks.put(Integer.parseInt(dataSnapshot.getKey()), getSimpleRoomTrack(track));
+//                tracks.put(Integer.parseInt(dataSnapshot.getKey()), getSimpleRoomTrack(track));
                 updateQueue(roomID);
             }
 
@@ -188,8 +186,8 @@ public class DJHomeActivity extends AppCompatActivity implements
 
     private void updateQueue(String roomID) {
         // Uses an Adapter to populate the ListView DJ Home with each PlaylistTrack
-        DJSongAdapter playlistAdapter = new DJSongAdapter(this, roomID, asList(tracks));
-        songsList.setAdapter(playlistAdapter);
+//        DJSongAdapter playlistAdapter = new DJSongAdapter(this, roomID, asList(tracks));
+//        songsList.setAdapter(playlistAdapter);
     }
 
     /**
@@ -234,10 +232,11 @@ public class DJHomeActivity extends AppCompatActivity implements
         return arrayList;
     }
 
-    private SimpleTrack getSimpleRoomTrack(Track track) {
-        return new SimpleTrack(track.id, track.name, getArtistsAsString(track.artists)
-                , getTrackDuration(track.duration_ms), (int) track.duration_ms, track.album.images.get(0).url);
-    }
+//    private SimpleTrack getSimpleRoomTrack(Track track) {
+//        return new SimpleTrack(track.id, track.name, getArtistsAsString(track.artists)
+//                , getTrackDuration(track.duration_ms), (int) track.duration_ms, new HashMap<>()
+//                , track.album.images.get(0).url);
+//    }
 
     @Override
     public void onLoggedIn() {

@@ -15,8 +15,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import static edu.illinois.finalproject.DJBoxUtils.getNumLikesForSong;
-
 // Used code from url below as reference:
 // https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
 public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
@@ -63,8 +61,7 @@ public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
     private void populateViews(DJSongViewHolder viewHolder, int pos, View itemView, SimpleTrack track) {
         viewHolder.nameTextView.setText(track.getName());
         viewHolder.artistsTextView.setText(track.getArtists());
-        viewHolder.numLikesTextView.setText(String.valueOf(
-                getNumLikesForSong(roomID, track.getId())));
+        viewHolder.numLikesTextView.setText(track.getLikes().size());
         viewHolder.durationTextView.setText(track.getDuration());
 
         // highlights the currently playing song, which is the first one

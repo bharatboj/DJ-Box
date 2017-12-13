@@ -1,7 +1,6 @@
 package edu.illinois.finalproject;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -20,7 +19,7 @@ import java.util.List;
 public class RoomAdapter extends ArrayAdapter<Room> {
 
     private List<String> roomIDs;
-    static ProgressDialog nDialog;
+    static AlertDialog alertDialog;
 
     /**
      * Inner class to hold a ViewHolder for Room
@@ -93,7 +92,7 @@ public class RoomAdapter extends ArrayAdapter<Room> {
             if (password != null) {
                 openPasswordDialog(context, audienceHomeIntent, password);
             } else {
-                transitionToAudienceHome(context, audienceHomeIntent);
+                context.startActivity(audienceHomeIntent);
             }
         });
     }
@@ -120,7 +119,7 @@ public class RoomAdapter extends ArrayAdapter<Room> {
                             // get user input and set it to result
                             // edit text
                             if (userInput.getText().toString().equals(password)) {
-                                transitionToAudienceHome(context, intent);
+                                context.startActivity(intent);
                             } else {
                                 String badPassText = "Incorrect Password Entered!";
                                 Toast toast = Toast.makeText(context, badPassText, Toast.LENGTH_LONG);
@@ -134,21 +133,9 @@ public class RoomAdapter extends ArrayAdapter<Room> {
                         });
 
         // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog = alertDialogBuilder.create();
 
         // prompt dialog
         alertDialog.show();
-    }
-
-    private void transitionToAudienceHome(Context context, Intent intent) {
-        // loads up progress bar as it transitions to next activity
-        nDialog = new ProgressDialog(getContext());
-        nDialog.setMessage("Loading..");
-        nDialog.setTitle("Accessing Party Playlist");
-        nDialog.setIndeterminate(false);
-        nDialog.setCancelable(true);
-        nDialog.show();
-
-        context.startActivity(intent);
     }
 }

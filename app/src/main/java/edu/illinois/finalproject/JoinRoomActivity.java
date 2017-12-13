@@ -34,15 +34,6 @@ public class JoinRoomActivity extends AppCompatActivity {
         rooms = new Hashtable<>();
 
         displayListOfRooms();
-
-//        requestSingleUpdate(this,
-//                location -> {
-//                    CountDownLatch latch = new CountDownLatch(1);
-//                    myLat = location.latitude;
-//                    myLong = location.longitude;
-//                    latch.countDown();
-//                });
-
     }
 
     /**
@@ -70,6 +61,12 @@ public class JoinRoomActivity extends AppCompatActivity {
      * @param roomsSnap     DataSnapshot object that represents all the room subtrees
      */
     private void updateRooms(DataSnapshot roomsSnap) {
+//        requestSingleUpdate(this,
+//                location -> {
+//                    myLat = location.latitude;
+//                    myLong = location.longitude;
+//                });
+
         // assuming there will not be many rooms that show up on the user's page setting to
         // an empty HashTable each time there's a change will not disrupt performance much.
         rooms.clear();

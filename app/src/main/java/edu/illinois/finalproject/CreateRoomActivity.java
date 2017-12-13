@@ -17,7 +17,6 @@ import java.util.HashMap;
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
 
 public class CreateRoomActivity extends AppCompatActivity {
-
     EditText roomNameEditText;
     RadioButton privateButton;
     RadioButton publicButton;
@@ -45,7 +44,7 @@ public class CreateRoomActivity extends AppCompatActivity {
      *
      * @param view      View object holding the "Create" Button
      */
-    public void onCreateButtonClicked(View view) {
+    public void onCreateButtonClicked(final View view) {
         // initialize all room attributes to their respective variables
         String roomID = getNewRoomID();
         String djID = getSpotifyService().getMe().id;
@@ -114,7 +113,7 @@ public class CreateRoomActivity extends AppCompatActivity {
      * @param roomID    String representing the unique roomID associated with the room
      * @param room      Room object representing the room
      */
-    private void goToSelectPlaylistPage(View view, String roomID, Room room) {
+    private void goToSelectPlaylistPage(final View view, final String roomID, final Room room) {
         final Context context = view.getContext();
         Intent selectPlaylistIntent = new Intent(context, SelectPlaylistActivity.class);
 
@@ -141,7 +140,7 @@ public class CreateRoomActivity extends AppCompatActivity {
      *
      * @param view      View object representing the Private RadioButton
      */
-    public void onPrivateClicked(View view) {
+    public void onPrivateClicked(final View view) {
         // Checks Private button on click and allows user to
         // type password for room and unchecks Public button
         privateButton.setChecked(true);
@@ -154,7 +153,7 @@ public class CreateRoomActivity extends AppCompatActivity {
      *
      * @param view      View object representing the Public RadioButton
      */
-    public void onPublicClicked(View view) {
+    public void onPublicClicked(final View view) {
         // Checks Public button on click and unchecks Private button
         publicButton.setChecked(true);
         privateButton.setChecked(false);

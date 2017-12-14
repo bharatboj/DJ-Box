@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.webkit.CookieManager;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
@@ -80,9 +79,7 @@ public class DJHomeActivity extends AppCompatActivity implements
         displaySongs();
 
         setPlayer();
-
-        onPlayClicked(room.getCurrPlayingTrackID());
-        mPlayer.queue(null, room.getNextToPlayTrackID());
+        controlPlayOnClick();
     }
 
     /**
@@ -172,18 +169,15 @@ public class DJHomeActivity extends AppCompatActivity implements
      *
      * @param view      View object that has actions performed when clicked on
      */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void onLogOutButtonClicked(final View view) {
         // remove room from Firebase to indicate party has ended once dj logs out
         FirebaseDatabase.getInstance().getReference("Rooms").child(roomID).removeValue();
 
-        Intent logoutIntent = new Intent(this, MainSignInActivity.class);
+//        Intent logoutIntent = new Intent(this, MainSignInActivity.class);
 
         // makes sure user cannot navigate backwards anymore
-        logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-        startActivity(logoutIntent);
-
-        finishAffinity();
+//        logoutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+//        startActivity(logoutIntent);
 
         // code from: https://stackoverflow.com/questions/28998241/how-to-clear-cookies
         //      -and-cache-of-webview-on-android-when-not-in-webview
@@ -191,14 +185,22 @@ public class DJHomeActivity extends AppCompatActivity implements
         // Since a WebView is used, information about the user from previous use is always retined.
         // This allows to remove all cookies so the user is able to logout completely from the
         // application
-        CookieManager.getInstance().removeAllCookie();
+
+        Intent intent = new Intent(DJHomeActivity.this, MainSignInActivity.class);
+        startActivity(intent);
+        finish();
     }
 
-    private void onPlayClicked(String trackID) {
+    /**
+     * Control flow of song based on playButton click
+     */
+    private void controlPlayOnClick() {
         playButton.setOnCheckedChangeListener((compoundButton, isPaused) -> {
             if (!isPaused) {
+                // play Uri where we previously left off
                 int positionMs = (int) mCurrentPlaybackState.positionMs;
-                mPlayer.playUri(null, "spotify:track:" + trackID, 0, positionMs);
+                mPlayer.playUri(null, "spotify:track:" + room.getCurrPlayingTrackID(),
+                        0, positionMs);
             } else {
                 mPlayer.pause(null);
             }
@@ -263,8 +265,16 @@ public class DJHomeActivity extends AppCompatActivity implements
     public void onPlaybackEvent(PlayerEvent playerEvent) {
         mCurrentPlaybackState = mPlayer.getPlaybackState();
 
+        // end playing once track size is below 5
         if (tracks.size() < 5) {
             mPlayer.isTerminated();
+        }
+        // there is no clear way using Spotify SDK to see when the tracks end, so for now
+        // , until I find a further solution, I have used this temporary solution
+        // allows user to use play button to go to next
+        if (Math.abs(tracks.get(0).getValue().getDurationMs() - mCurrentPlaybackState.positionMs) < 500) {
+            tracks = room.getUpdatedPlaylist(false);
+            mPlayer.playUri(null, room.getCurrPlayingTrackID(), 0, 0);
         }
     }
 

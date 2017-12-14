@@ -14,10 +14,11 @@ import android.widget.ToggleButton;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Map;
 
 // Used code from url below as reference:
 // https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
-public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
+public class DJSongAdapter extends ArrayAdapter<Map.Entry<String, SimpleTrack>> {
     /**
      * Inner class that represents a Holder of all the necessary
      * Views to include in a Track item for DJ Home
@@ -37,7 +38,7 @@ public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
      * @param context       Context object representing context of calling activity
      * @param tracks        List of SimpleTrack objects representing current tracks for room
      */
-    DJSongAdapter(Context context, List<SimpleTrack> tracks) {
+    DJSongAdapter(Context context, List<Map.Entry<String, SimpleTrack>> tracks) {
         super(context, R.layout.dj_home_song_item, tracks);
     }
 
@@ -57,7 +58,7 @@ public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
     @NonNull
     @Override
     public View getView(int pos, View itemView, @NonNull ViewGroup parent) {
-        SimpleTrack track = getItem(pos);
+        Map.Entry<String, SimpleTrack> track = getItem(pos);
 
         // itemView may not be null, so it is good to initialize it only if necessary
         if (itemView == null) {
@@ -65,7 +66,7 @@ public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
                     .inflate(R.layout.dj_home_song_item, parent, false);
         }
 
-        // initalize all the Views within DJSongViewHolder
+        // initialize all the Views within DJSongViewHolder
         // recycling view to reduce number of internal calls
         DJSongViewHolder viewHolder = new DJSongViewHolder();
         viewHolder.nameTextView = (TextView) itemView.findViewById(R.id.tv_song_name);
@@ -75,7 +76,7 @@ public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
         viewHolder.songImageView = (ImageView) itemView.findViewById(R.id.iv_song);
         viewHolder.likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite);
 
-        populateViews(viewHolder, pos, itemView, track);
+        populateViews(viewHolder, pos, itemView, track.getValue());
 
         return itemView;
     }
@@ -94,7 +95,7 @@ public class DJSongAdapter extends ArrayAdapter<SimpleTrack> {
         // populating each View with respective information
         viewHolder.nameTextView.setText(track.getName());
         viewHolder.artistsTextView.setText(track.getArtists());
-        viewHolder.numLikesTextView.setText(track.getLikes().size());
+        viewHolder.numLikesTextView.setText(String.valueOf(track.getLikesCount()));
         viewHolder.durationTextView.setText(track.getDuration());
 
         // highlights the currently playing song, which is the first one

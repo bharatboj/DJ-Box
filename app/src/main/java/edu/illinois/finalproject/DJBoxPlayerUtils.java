@@ -5,14 +5,17 @@ import android.widget.ToggleButton;
 
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
 import static edu.illinois.finalproject.SpotifyClient.CLIENT_ID;
 
-public class DJBoxPlayerUtils {
+public class DJBoxPlayerUtils implements Player.NotificationCallback, ConnectionStateCallback {
+
     static Player mPlayer;
     static int currentTrackPosMs;
 
@@ -43,5 +46,33 @@ public class DJBoxPlayerUtils {
             public void onError(Throwable throwable) {
             }
         });
+    }
+
+    @Override
+    public void onLoggedIn() {
+    }
+
+    @Override
+    public void onLoggedOut() {
+    }
+
+    @Override
+    public void onLoginFailed(Error error) {
+    }
+
+    @Override
+    public void onTemporaryError() {
+    }
+
+    @Override
+    public void onConnectionMessage(String s) {
+    }
+
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+    }
+
+    @Override
+    public void onPlaybackError(Error error) {
     }
 }

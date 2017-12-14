@@ -51,6 +51,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="50dp"
+        android:onClick="onLikeButtonPressed"
         android:text="#"
         android:textSize="20sp"
         android:textColor="#999999"
@@ -63,8 +64,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/tb_favorite"
         android:checked="false"
+        android:background="@drawable/tb_favorite"
         android:text=""
         android:textOff=""
         android:textOn=""/>

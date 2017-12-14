@@ -16,11 +16,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Map;
 
-public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
+public class AudienceSongAdapter extends ArrayAdapter<Map.Entry<String, SimpleTrack>> {
     private String roomID;
     private String userID;
-    private List<String> trackIDs;
 
     private static class AudienceSongViewHolder {
         ImageView songImageView;
@@ -30,22 +30,20 @@ public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
         ToggleButton likeButton;
     }
 
-    AudienceSongAdapter(Context context, String roomID, String userID,
-                        List<String> trackIDs, List<SimpleTrack> tracks) {
+    AudienceSongAdapter(final Context context, final String roomID, final String userID,
+                        final List<Map.Entry<String, SimpleTrack>> tracks) {
 
         super(context, R.layout.audience_home_song_item, tracks);
 
         // initialize fields with values passed in teh constructor
         this.roomID = roomID;
         this.userID = userID;
-        this.trackIDs = trackIDs;
     }
 
     @NonNull
     @Override
-    public View getView(int pos, View itemView, @NonNull ViewGroup parent) {
-        String trackID = trackIDs.get(pos);
-        SimpleTrack track = getItem(pos);
+    public View getView(final int pos, View itemView, @NonNull final ViewGroup parent) {
+        Map.Entry<String, SimpleTrack> trackPair = getItem(pos);
 
         if (itemView == null) {
             itemView = LayoutInflater.from(getContext())
@@ -57,16 +55,15 @@ public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
         viewHolder.artistsTextView = (TextView) itemView.findViewById(R.id.tv_artists_aud);
         viewHolder.numLikesTextView = (TextView) itemView.findViewById(R.id.tv_num_likes_aud);
         viewHolder.songImageView = (ImageView) itemView.findViewById(R.id.iv_song_aud);
-        viewHolder.likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite_aud);
 
-        populateViews(viewHolder, pos, itemView, track);
-        updateLikesOnClick(viewHolder, itemView, trackID);
+        populateViews(viewHolder, pos, itemView, trackPair.getValue());
+        updateLikesOnClick(viewHolder, trackPair);
 
         return itemView;
     }
 
-    private void populateViews(AudienceSongViewHolder viewHolder, int pos,
-                               View itemView, SimpleTrack track) {
+    private void populateViews(final AudienceSongViewHolder viewHolder, final int pos,
+                               final View itemView, final SimpleTrack track) {
 
         viewHolder.nameTextView.setText(track.getName());
         viewHolder.artistsTextView.setText(track.getArtists());
@@ -94,23 +91,25 @@ public class AudienceSongAdapter extends ArrayAdapter<SimpleTrack> {
         Picasso.with(itemView.getContext()).load(imageUrl).into(viewHolder.songImageView);
     }
 
-    private void updateLikesOnClick(AudienceSongViewHolder viewHolder,
-                                    View itemView, String trackID) {
+    private void updateLikesOnClick(final AudienceSongViewHolder viewHolder,
+                                    final Map.Entry<String, SimpleTrack> trackPair) {
 
-        DatabaseReference userLikeRef = FirebaseDatabase.getInstance()
+        DatabaseReference playlistTrackRef = FirebaseDatabase.getInstance()
                 .getReference("Rooms").child(roomID).child("playlist")
-                .child(trackID).child("likedBy").child(userID);
-        ToggleButton likeButton = (ToggleButton) itemView.findViewById(R.id.tb_favorite_aud);
+                .child(trackPair.getKey());
 
-        likeButton.setOnCheckedChangeListener((compoundButton, isLiked) -> {
-            int currNumLikes = Integer.parseInt(viewHolder.numLikesTextView.getText().toString());
+        DatabaseReference likedByRef = playlistTrackRef.child("likedBy").child(userID);
+
+        viewHolder.likeButton.setOnCheckedChangeListener((compoundButton, isLiked) -> {
             if (isLiked) {
-                userLikeRef.setValue(true);
-                viewHolder.numLikesTextView.setText(String.valueOf(currNumLikes + 1));
+                likedByRef.setValue(true);
+                playlistTrackRef.child("likesCount").setValue(trackPair.getValue().getLikesCount() + 1);
             } else {
-                userLikeRef.removeValue();
-                viewHolder.numLikesTextView.setText(String.valueOf(currNumLikes - 1));
+                likedByRef.removeValue();
+                playlistTrackRef.child("likesCount").setValue(trackPair.getValue().getLikesCount() - 1);
             }
         });
     }
+
+
 }

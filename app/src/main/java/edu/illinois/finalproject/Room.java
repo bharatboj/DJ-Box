@@ -1,12 +1,17 @@
 package edu.illinois.finalproject;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+
+import static java.util.Collections.sort;
 
 class Room implements Parcelable {
     private String access;
@@ -14,8 +19,8 @@ class Room implements Parcelable {
     private String pass;
     private String name;
     private HashMap<String, SimpleTrack> playlist;
-    private String currPlayingTrack;
-    private String nextToPlayTrack;
+    private String currPlayingTrackID;
+    private String nextToPlayTrackID;
     private Double latitude;
     private Double longitude;
 
@@ -34,8 +39,8 @@ class Room implements Parcelable {
             SimpleTrack value = in.readParcelable(SimpleTrack.class.getClassLoader());
             this.playlist.put(key, value);
         }
-        this.currPlayingTrack = in.readString();
-        this.nextToPlayTrack = in.readString();
+        this.currPlayingTrackID = in.readString();
+        this.nextToPlayTrackID = in.readString();
         this.latitude = (Double) in.readValue(Double.class.getClassLoader());
         this.longitude = (Double) in.readValue(Double.class.getClassLoader());
     }
@@ -49,8 +54,8 @@ class Room implements Parcelable {
         this.pass = pass;
         this.name = name;
         this.playlist = playlist;
-        this.currPlayingTrack = currPlayingTrack;
-        this.nextToPlayTrack = nextToPlayTrack;
+        this.currPlayingTrackID = currPlayingTrack;
+        this.nextToPlayTrackID = nextToPlayTrack;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -75,43 +80,38 @@ class Room implements Parcelable {
         return playlist;
     }
 
-    public ArrayList<SimpleTrack> getSortedPlaylistTracks() {
-        ArrayList<SimpleTrack> tracks = new ArrayList<>(getSortedFutureSwappedPlaylist().keySet());
+    @TargetApi(Build.VERSION_CODES.N)
+    public List<Map.Entry<String, SimpleTrack>> getUpdatedPlaylist(boolean currSongIsStillPlaying) {
+        Map<String, SimpleTrack> futureTracksMap = new HashMap<>(playlist);
 
-        tracks.add(0, this.playlist.get(nextToPlayTrack));
-        tracks.add(0, this.playlist.get(currPlayingTrack));
+        SimpleTrack currPlayingTrack = futureTracksMap.get(currPlayingTrackID);
+        SimpleTrack nextToPlayTrack = futureTracksMap.get(nextToPlayTrackID);
+        futureTracksMap.remove(currPlayingTrackID);
+        futureTracksMap.remove(nextToPlayTrackID);
 
-        return tracks;
-    }
+        List<Map.Entry<String, SimpleTrack>> playlistPairs = new ArrayList<>(futureTracksMap.entrySet());
+        sort(playlistPairs, (track1, track2) -> track1.getValue().compareTo(track2.getValue()));
 
-    public ArrayList<String> getSortedPlaylistIDs() {
-        ArrayList<String> trackIDs = new ArrayList<>(getSortedFutureSwappedPlaylist().values());
+        playlistPairs.add(0, new AbstractMap.SimpleEntry<>(nextToPlayTrackID, nextToPlayTrack));
 
-        trackIDs.add(0, nextToPlayTrack);
-        trackIDs.add(0, currPlayingTrack);
-
-        return trackIDs;
-    }
-
-    private TreeMap<SimpleTrack, String> getSortedFutureSwappedPlaylist() {
-        Map<String, SimpleTrack> futureTracks = new HashMap<>(this.playlist);
-        futureTracks.remove(currPlayingTrack);
-        futureTracks.remove(nextToPlayTrack);
-
-        Map<SimpleTrack, String> rev = new HashMap<>();
-        for(Map.Entry<String, SimpleTrack> entry : futureTracks.entrySet()) {
-            rev.put(entry.getValue(), entry.getKey());
+        if (currSongIsStillPlaying) {
+            playlistPairs.add(0, new AbstractMap.SimpleEntry<>(currPlayingTrackID, currPlayingTrack));
+        } else {
+            currPlayingTrackID = nextToPlayTrackID;
+            nextToPlayTrackID = playlistPairs.get(1).getKey();
         }
 
-        return new TreeMap<>(rev);
+        updatePlaylist(playlistPairs);
+
+        return playlistPairs;
     }
 
-    public String getCurrPlayingTrack() {
-        return currPlayingTrack;
+    public String getCurrPlayingTrackID() {
+        return currPlayingTrackID;
     }
 
-    public String getNextToPlayTrack() {
-        return nextToPlayTrack;
+    public String getNextToPlayTrackID() {
+        return nextToPlayTrackID;
     }
 
     public Double getLatitude() {
@@ -126,12 +126,18 @@ class Room implements Parcelable {
         this.playlist = playlist;
     }
 
-    public void setCurrPlayingTrack(String currPlayingTrack) {
-        this.currPlayingTrack = currPlayingTrack;
+    @TargetApi(Build.VERSION_CODES.N)
+    public void updatePlaylist(List<Map.Entry<String, SimpleTrack>> playlistPairs) {
+        playlist.clear();
+        playlistPairs.forEach(trackPair -> playlist.put(trackPair.getKey(), trackPair.getValue()));
     }
 
-    public void setNextToPlayTrack(String nextToPlayTrack) {
-        this.nextToPlayTrack = nextToPlayTrack;
+    public void setCurrPlayingTrackID(String currPlayingTrackID) {
+        this.currPlayingTrackID = currPlayingTrackID;
+    }
+
+    public void setNextToPlayTrackID(String nextToPlayTrackID) {
+        this.nextToPlayTrackID = nextToPlayTrackID;
     }
 
     @Override
@@ -150,8 +156,8 @@ class Room implements Parcelable {
             dest.writeString(entry.getKey());
             dest.writeParcelable(entry.getValue(), flags);
         }
-        dest.writeString(this.currPlayingTrack);
-        dest.writeString(this.nextToPlayTrack);
+        dest.writeString(this.currPlayingTrackID);
+        dest.writeString(this.nextToPlayTrackID);
         dest.writeValue(this.latitude);
         dest.writeValue(this.longitude);
     }

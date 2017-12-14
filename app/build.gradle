@@ -51,5 +51,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:customtabs:25.4.0'
     compile 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
+    compile 'org.apache.commons:commons-lang3:3.4'
 }
 apply plugin: 'com.google.gms.google-services'

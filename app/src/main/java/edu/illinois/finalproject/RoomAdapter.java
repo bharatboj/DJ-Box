@@ -13,8 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 public class RoomAdapter extends ArrayAdapter<Room> {
 
@@ -34,7 +34,7 @@ public class RoomAdapter extends ArrayAdapter<Room> {
      * @param context   Context object that holds context of calling Activity
      * @param rooms     List<Room> object that contains list of Room objects
      */
-    RoomAdapter(final Context context, final Hashtable<String, Room> rooms) {
+    RoomAdapter(final Context context, final Map<String, Room> rooms) {
         super(context, R.layout.join_room_list_item, new ArrayList<>(rooms.values()));
 
         this.roomIDs = new ArrayList<>(rooms.keySet());

@@ -3,6 +3,7 @@ package edu.illinois.finalproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -12,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static edu.illinois.finalproject.RoomAdapter.alertDialog;
@@ -20,6 +22,7 @@ public class AudienceHomeActivity extends AppCompatActivity {
 
     private ListView songsList;
     private String userID;
+    private String roomID;
 
     /**
      * This function sets up the activity
@@ -31,13 +34,15 @@ public class AudienceHomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.audience_home);
 
-        // make sure the alert dialog ends once activity reaches
-        alertDialog.dismiss();
+        // make sure the alert dialog (if it exists) ends once activity reaches
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
 
         // gets Room and Room ID that was passed through the intent
         Intent intent = getIntent();
         Room room = intent.getParcelableExtra("room");
-        String roomID = intent.getStringExtra("roomID");
+        roomID = intent.getStringExtra("roomID");
 
         // sets the title of the ActionBar for this activity to the name of the room (Party)
         setTitle(room.getName());
@@ -63,7 +68,7 @@ public class AudienceHomeActivity extends AppCompatActivity {
         roomRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                updateTracks(roomID, dataSnapshot);
+                updateQueue(roomID, dataSnapshot);
             }
 
             @Override
@@ -77,17 +82,18 @@ public class AudienceHomeActivity extends AppCompatActivity {
      *
      * @param roomSnapshot    DataSnapshot object representing the playlist of a particular room
      */
-    private void updateTracks(String roomID, DataSnapshot roomSnapshot) {
+    private void updateQueue(String roomID, DataSnapshot roomSnapshot) {
         // sorts all tracks except 1st two by number of likes
         // the first two don't get sorted because they contain currently
         // playing track and queued track
         Room updatedRoom = roomSnapshot.getValue(Room.class);
-        List<String> sortedPlayOrderIDs = updatedRoom.getSortedPlaylistIDs();
-        List<SimpleTrack> sortedPlayOrderTracks = updatedRoom.getSortedPlaylistTracks();
+        // updatedRoom is never null from the audience side when using app
+        List<Map.Entry<String, SimpleTrack>> sortedPlayOrder = updatedRoom.getUpdatedPlaylist(true);
 
         // populate the List of tracks View with the new set of tracks
-        AudienceSongAdapter playlistAdapter = new AudienceSongAdapter(this, roomID, userID,
-                sortedPlayOrderIDs, sortedPlayOrderTracks);
+        AudienceSongAdapter playlistAdapter = new AudienceSongAdapter(this,
+                roomID, userID, sortedPlayOrder);
+        playlistAdapter.notifyDataSetChanged();
         songsList.setAdapter(playlistAdapter);
     }
 
@@ -98,4 +104,24 @@ public class AudienceHomeActivity extends AppCompatActivity {
     public void onBackPressed() {
     }
 
+    public void onLikeButtonPressed(View view) {
+        DatabaseReference playlistTrackRef = FirebaseDatabase.getInstance()
+                .getReference("Rooms").child(roomID).child("playlist")
+                .child(userID);
+
+        DatabaseReference likedByRef = playlistTrackRef.child("likedBy").child(userID);
+
+        int pos = songsList.getPositionForView(view);
+
+        View itemView = (View) songsList.getItemAtPosition(pos);
+
+        if ()
+            if (isLiked) {
+                likedByRef.setValue(true);
+                playlistTrackRef.child("likesCount").setValue(trackPair.getValue().getLikesCount() + 1);
+            } else {
+                likedByRef.removeValue();
+                playlistTrackRef.child("likesCount").setValue(trackPair.getValue().getLikesCount() - 1);
+            }
+    }
 }

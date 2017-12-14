@@ -3,6 +3,7 @@ package edu.illinois.finalproject;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -10,14 +11,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JoinRoomActivity extends AppCompatActivity {
 
     private ListView roomList;
-    private Hashtable<String, Room> rooms;
-    private double myLat;
-    private double myLong;
+    private Map<String, Room> rooms;
 
     /**
      * This function sets up the activity
@@ -31,7 +31,7 @@ public class JoinRoomActivity extends AppCompatActivity {
 
         // initialize fields
         roomList = (ListView) findViewById(R.id.lv_join_room_list);
-        rooms = new Hashtable<>();
+        rooms = new HashMap<>();
 
         displayListOfRooms();
     }
@@ -61,12 +61,6 @@ public class JoinRoomActivity extends AppCompatActivity {
      * @param roomsSnap     DataSnapshot object that represents all the room subtrees
      */
     private void updateRooms(DataSnapshot roomsSnap) {
-//        requestSingleUpdate(this,
-//                location -> {
-//                    myLat = location.latitude;
-//                    myLong = location.longitude;
-//                });
-
         // assuming there will not be many rooms that show up on the user's page setting to
         // an empty HashTable each time there's a change will not disrupt performance much.
         rooms.clear();
@@ -75,6 +69,11 @@ public class JoinRoomActivity extends AppCompatActivity {
             String roomID = roomSnap.getKey();
             Room room = roomSnap.getValue(Room.class);
             rooms.put(roomID, room);
+        }
+
+        if (rooms.size() == 0) {
+            String noActiveRoomsText = "No active rooms in this area. Please check again later.";
+            Toast.makeText(this, noActiveRoomsText, Toast.LENGTH_SHORT).show();
         }
 
         // Populates the join room ListView with all the appropriate room informatoin

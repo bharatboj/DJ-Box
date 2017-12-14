@@ -15,7 +15,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.spotify.sdk.android.player.Config;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -27,16 +33,20 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 
-import static edu.illinois.finalproject.DJBoxPlayerUtils.usePlayButtonToPlaySong;
 import static edu.illinois.finalproject.DJBoxUtils.getSimpleTrack;
 import static edu.illinois.finalproject.DJBoxUtils.getSpotifyService;
+import static edu.illinois.finalproject.MainSignInActivity.getAccessToken;
+import static edu.illinois.finalproject.SpotifyClient.CLIENT_ID;
 
-public class DJHomeActivity extends AppCompatActivity {
+public class DJHomeActivity extends AppCompatActivity implements
+        Player.NotificationCallback, ConnectionStateCallback {
 
     private ListView songsList;
 
     private String roomID;
     private List<Map.Entry<String, SimpleTrack>> tracks;
+    private Player mPlayer;
+    private int currentTrackPosMs;
 
     /**
      * This function sets up the activity
@@ -65,7 +75,7 @@ public class DJHomeActivity extends AppCompatActivity {
         addPlaylistTracksToDatabase(roomID, room);
 
         displaySongs(roomID);
-        usePlayButtonToPlaySong(this, playButton, room.getCurrPlayingTrackID());
+        setPlayer(room.getCurrPlayingTrackID());
     }
 
     /**
@@ -181,11 +191,34 @@ public class DJHomeActivity extends AppCompatActivity {
         CookieManager.getInstance().removeAllCookie();
     }
 
-    @Override
-    protected void onDestroy() {
-        // VERY IMPORTANT! This must always be called or else you will leak resources
-        Spotify.destroyPlayer(this);
-        super.onDestroy();
+    private void usePlayButtonToPlaySong(String trackID) {
+        ToggleButton playButton = (ToggleButton) findViewById(R.id.play_button);
+        playButton.setOnCheckedChangeListener((compoundButton, isPaused) -> {
+            if (!isPaused) {
+                mPlayer.playUri(null, "spotify:track:" + trackID, 0, currentTrackPosMs);
+                currentTrackPosMs = (int) mPlayer.getPlaybackState().positionMs;
+            } else {
+                mPlayer.pause(null);
+            }
+        });
+    }
+
+    private void setPlayer(String trackID) {
+        Config playerConfig = new Config(this, getAccessToken(), CLIENT_ID);
+
+        Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(SpotifyPlayer spotifyPlayer) {
+                mPlayer = spotifyPlayer;
+                mPlayer.addConnectionStateCallback(DJHomeActivity.this);
+                mPlayer.addNotificationCallback(DJHomeActivity.this);
+                usePlayButtonToPlaySong(trackID);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+            }
+        });
     }
 
     /**
@@ -193,5 +226,40 @@ public class DJHomeActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
+    }
+
+    @Override
+    protected void onDestroy() {
+        // VERY IMPORTANT! This must always be called or else you will leak resources
+        Spotify.destroyPlayer(this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLoggedIn() {
+    }
+
+    @Override
+    public void onLoggedOut() {
+    }
+
+    @Override
+    public void onLoginFailed(Error error) {
+    }
+
+    @Override
+    public void onTemporaryError() {
+    }
+
+    @Override
+    public void onConnectionMessage(String s) {
+    }
+
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+    }
+
+    @Override
+    public void onPlaybackError(Error error) {
     }
 }

@@ -12,7 +12,7 @@ class SimpleTrack implements Parcelable, Comparable {
     private String duration;
     private int durationMs;
     private int likesCount;
-    private HashMap<String, Boolean> likedBy;
+    private HashMap<String, String> likedBy;
     private String imageUrl;
 
     SimpleTrack() {
@@ -24,12 +24,12 @@ class SimpleTrack implements Parcelable, Comparable {
         this.duration = in.readString();
         this.durationMs = in.readInt();
         this.likesCount = in.readInt();
-        this.likedBy = (HashMap<String, Boolean>) in.readSerializable();
+        this.likedBy = (HashMap<String, String>) in.readSerializable();
         this.imageUrl = in.readString();
     }
 
     SimpleTrack(String name, String artists, String duration, int durationMs
-            , int likesCount, HashMap<String, Boolean> likedBy, String imageUrl) {
+            , int likesCount, HashMap<String, String> likedBy, String imageUrl) {
         this.name = name;
         this.artists = artists;
         this.duration = duration;
@@ -59,7 +59,7 @@ class SimpleTrack implements Parcelable, Comparable {
         return likesCount;
     }
 
-    public HashMap<String, Boolean> getLikes() {
+    public HashMap<String, String> getLikes() {
         return likedBy;
     }
 
@@ -67,6 +67,20 @@ class SimpleTrack implements Parcelable, Comparable {
         return imageUrl;
     }
 
+    /**
+     * Allows to compare SimpleTrack objects based on number of likes it has
+     *
+     * @param anotherTrack  the other SimpleTrack objcet to compare to
+     * @return          difference between anotherTrackLikes and thisTrackLikesCount
+     *                  throws ClassCastException if another track is not an instance of SimpleTrack
+     */
+    @Override
+    public int compareTo(@NonNull Object anotherTrack) {
+        if (!(anotherTrack instanceof SimpleTrack))
+            throw new ClassCastException("A SimpleTrack object expected.");
+        int anotherTrackLikes = ((SimpleTrack) anotherTrack).getLikesCount();
+        return anotherTrackLikes - this.likesCount;
+    }
 
     @Override
     public int describeContents() {
@@ -95,12 +109,4 @@ class SimpleTrack implements Parcelable, Comparable {
             return new SimpleTrack[size];
         }
     };
-
-    @Override
-    public int compareTo(@NonNull Object anotherTrack) {
-        if (!(anotherTrack instanceof SimpleTrack))
-            throw new ClassCastException("A SimpleTrack object expected.");
-        int anotherPersonAge = ((SimpleTrack) anotherTrack).getLikesCount();
-        return anotherPersonAge - this.likesCount;
-    }
 }

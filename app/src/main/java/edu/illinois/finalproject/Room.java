@@ -80,27 +80,42 @@ class Room implements Parcelable {
         return playlist;
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
+    /**
+     * Returns a list of Map.Entry<String, SimpleTrack> objects
+     * representing the current queue in order
+     *
+     * @param currSongIsStillPlaying   boolean representing whether current Song is still playing
+     * @return                         a list of Map.Entry<String, SimpleTrack> objects representing
+     *                                 the current queue in order
+     */
     public List<Map.Entry<String, SimpleTrack>> getUpdatedPlaylist(boolean currSongIsStillPlaying) {
+        // futureTracksMap contains all tracks except the currently playing one
+        // and the one that will play next
         Map<String, SimpleTrack> futureTracksMap = new HashMap<>(playlist);
-
         SimpleTrack currPlayingTrack = futureTracksMap.get(currPlayingTrackID);
         SimpleTrack nextToPlayTrack = futureTracksMap.get(nextToPlayTrackID);
         futureTracksMap.remove(currPlayingTrackID);
         futureTracksMap.remove(nextToPlayTrackID);
 
+        // Convert the futureTracksMap to a List of Map.Entry<String, SimpleTrack>>
         List<Map.Entry<String, SimpleTrack>> playlistPairs = new ArrayList<>(futureTracksMap.entrySet());
+        // Sort the playlist pairs in descending order based on number of likes
         sort(playlistPairs, (track1, track2) -> track1.getValue().compareTo(track2.getValue()));
 
+        // add the next song at the start of the list if current song is over
         playlistPairs.add(0, new AbstractMap.SimpleEntry<>(nextToPlayTrackID, nextToPlayTrack));
 
+        // if current song is still playing, then we add it to the start of the playlist
         if (currSongIsStillPlaying) {
             playlistPairs.add(0, new AbstractMap.SimpleEntry<>(currPlayingTrackID, currPlayingTrack));
         } else {
+            // else we set the current track to the next track to play
+            // and the next track to the song after that
             currPlayingTrackID = nextToPlayTrackID;
             nextToPlayTrackID = playlistPairs.get(1).getKey();
         }
 
+        // update the playlist with the sorted pair values
         updatePlaylist(playlistPairs);
 
         return playlistPairs;
@@ -126,6 +141,13 @@ class Room implements Parcelable {
         this.playlist = playlist;
     }
 
+    /**
+     * Updates the Playlist with the new set of Map.Entry<String, SimpleTrack>values representing the
+     * new playlist
+     *
+     * @param playlistPairs    Map.Entry<String, SimpleTrack>> object representing the list
+     *                         of playlist pairs
+     */
     @TargetApi(Build.VERSION_CODES.N)
     public void updatePlaylist(List<Map.Entry<String, SimpleTrack>> playlistPairs) {
         playlist.clear();

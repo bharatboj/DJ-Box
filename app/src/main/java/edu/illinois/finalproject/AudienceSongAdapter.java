@@ -15,14 +15,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 public class AudienceSongAdapter extends ArrayAdapter<Map.Entry<String, SimpleTrack>> {
     private String roomID;
     private String userID;
+    static int count;
 
     /**
      * Inner class that represents a Holder of all the necessary
@@ -104,7 +104,11 @@ public class AudienceSongAdapter extends ArrayAdapter<Map.Entry<String, SimpleTr
         viewHolder.nameTextView.setText(track.getName());
         viewHolder.artistsTextView.setText(track.getArtists());
         viewHolder.numLikesTextView.setText(String.valueOf(track.getLikesCount()));
+        System.out.println("PV" + viewHolder.likeButton.isChecked());
+        System.out.println("TL" + (track.getLikes() != null ? (new ArrayList<>(track.getLikes().entrySet())) : "null"));
+        viewHolder.likeButton.setChecked(track.getLikes() != null && track.getLikes().containsKey(userID));
 
+        // highlights the currently playing song, which is the first one
         if (pos == 0) {
             itemView.setBackgroundColor(Color.rgb(188, 207, 221));
             viewHolder.nameTextView.setTextColor(Color.BLACK);
@@ -144,18 +148,14 @@ public class AudienceSongAdapter extends ArrayAdapter<Map.Entry<String, SimpleTr
         DatabaseReference likedByRef = playlistTrackRef.child("likedBy").child(userID);
 
         viewHolder.likeButton.setOnCheckedChangeListener((compoundButton, isLiked) -> {
-            CountDownLatch latch = new CountDownLatch(1);
             if (isLiked) {
-                likedByRef.setValue(true);
+                likedByRef.setValue("true");
                 playlistTrackRef.child("likesCount").setValue(trackPair.getValue().getLikesCount() + 1);
+                viewHolder.likeButton.setChecked(true);
             } else {
                 likedByRef.removeValue();
                 playlistTrackRef.child("likesCount").setValue(trackPair.getValue().getLikesCount() - 1);
-            }
-            try {
-                latch.await(3, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                viewHolder.likeButton.setChecked(false);
             }
         });
     }

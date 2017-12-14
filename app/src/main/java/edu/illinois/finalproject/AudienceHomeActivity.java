@@ -92,7 +92,6 @@ public class AudienceHomeActivity extends AppCompatActivity {
         // populate the List of tracks View with the new set of tracks
         AudienceSongAdapter playlistAdapter = new AudienceSongAdapter(this,
                 roomID, userID, sortedPlayOrder);
-        playlistAdapter.notifyDataSetChanged();
         songsList.setAdapter(playlistAdapter);
     }
 

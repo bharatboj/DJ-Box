@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.ToggleButton;
 
 import com.google.firebase.database.DataSnapshot;
@@ -81,7 +80,9 @@ public class DJHomeActivity extends AppCompatActivity implements
         displaySongs();
 
         setPlayer();
+
         onPlayClicked(room.getCurrPlayingTrackID());
+        mPlayer.queue(null, room.getNextToPlayTrackID());
     }
 
     /**
@@ -196,8 +197,8 @@ public class DJHomeActivity extends AppCompatActivity implements
     private void onPlayClicked(String trackID) {
         playButton.setOnCheckedChangeListener((compoundButton, isPaused) -> {
             if (!isPaused) {
-                mPlayer.playUri(null, "spotify:track:" + trackID, 0,
-                        (int) mCurrentPlaybackState.positionMs);
+                int positionMs = (int) mCurrentPlaybackState.positionMs;
+                mPlayer.playUri(null, "spotify:track:" + trackID, 0, positionMs);
             } else {
                 mPlayer.pause(null);
             }
@@ -262,17 +263,8 @@ public class DJHomeActivity extends AppCompatActivity implements
     public void onPlaybackEvent(PlayerEvent playerEvent) {
         mCurrentPlaybackState = mPlayer.getPlaybackState();
 
-        int progressLoad = (int) (100 * ((double) mCurrentPlaybackState.positionMs) /
-                tracks.get(0).getValue().getDurationMs());
-
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_loader);
-        progressBar.setProgress(progressLoad);
-
         if (tracks.size() < 5) {
             mPlayer.isTerminated();
-        }
-        if (!playButton.isChecked() && mCurrentPlaybackState.positionMs == 0) {
-            mPlayer.playUri(null, room.getCurrPlayingTrackID(), 0, 0);
         }
     }
 

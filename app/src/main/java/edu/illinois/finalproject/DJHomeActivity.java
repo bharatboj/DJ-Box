@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.ToggleButton;
 
 import com.google.firebase.database.DataSnapshot;
@@ -18,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.PlaybackState;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
@@ -42,11 +44,13 @@ public class DJHomeActivity extends AppCompatActivity implements
         Player.NotificationCallback, ConnectionStateCallback {
 
     private ListView songsList;
+    private ToggleButton playButton;
 
     private String roomID;
+    private Room room;
     private List<Map.Entry<String, SimpleTrack>> tracks;
-    private Player mPlayer;
-    private int currentTrackPosMs;
+    private SpotifyPlayer mPlayer;
+    private PlaybackState mCurrentPlaybackState;
 
     /**
      * This function sets up the activity
@@ -60,22 +64,24 @@ public class DJHomeActivity extends AppCompatActivity implements
         setContentView(R.layout.dj_home);
 
         songsList = (ListView) findViewById(R.id.lv_playlist_songs);
-        ToggleButton playButton = (ToggleButton) findViewById(R.id.play_button);
+        playButton = (ToggleButton) findViewById(R.id.play_button);
 
         // get room, roomID, and playlist that was passed through the intents
         Intent intent = getIntent();
         roomID = intent.getStringExtra("roomID");
-        Room room = intent.getParcelableExtra("room");
+        room = intent.getParcelableExtra("room");
         PlaylistSimple playlist = intent.getParcelableExtra("playlist");
 
         // Sets the title of the ActionBar for this activity to the name of the room (Party)
         setTitle(room.getName());
 
-        initializePartyPlaylist(room, playlist);
-        addPlaylistTracksToDatabase(roomID, room);
+        initializePartyPlaylist(playlist);
+        addPlaylistTracksToDatabase();
 
-        displaySongs(roomID);
-        setPlayer(room.getCurrPlayingTrackID());
+        displaySongs();
+
+        setPlayer();
+        onPlayClicked(room.getCurrPlayingTrackID());
     }
 
     /**
@@ -83,7 +89,7 @@ public class DJHomeActivity extends AppCompatActivity implements
      *
      * @param playlist      PlaylistSimple object to obtain PlaylistTrack objects from
      */
-    private void initializePartyPlaylist(Room room, PlaylistSimple playlist) {
+    private void initializePartyPlaylist(PlaylistSimple playlist) {
         tracks = new ArrayList<>();
 
         // get SpotifyService object to allow to make API calls to Spotify
@@ -112,10 +118,8 @@ public class DJHomeActivity extends AppCompatActivity implements
 
     /**
      * Adds all tracks information in playlist to FireBase Database
-     *
-     * @param roomID    String representing roomID of room to add playlist tracks to
      */
-    private void addPlaylistTracksToDatabase(String roomID, Room room) {
+    private void addPlaylistTracksToDatabase() {
         // add a playlist containing the songIDs in the
         // respective room and updates FireBase room values
         room.updatePlaylist(tracks);
@@ -125,10 +129,8 @@ public class DJHomeActivity extends AppCompatActivity implements
 
     /**
      * Initialize tracks to the tracks that are within the playlist of the room
-     *
-     * @param roomID                String representing the id of the room
      */
-     private void displaySongs(String roomID) {
+     private void displaySongs() {
         DatabaseReference roomRef = FirebaseDatabase.getInstance()
                 .getReference("Rooms").child(roomID);
 
@@ -191,32 +193,33 @@ public class DJHomeActivity extends AppCompatActivity implements
         CookieManager.getInstance().removeAllCookie();
     }
 
-    private void usePlayButtonToPlaySong(String trackID) {
-        ToggleButton playButton = (ToggleButton) findViewById(R.id.play_button);
+    private void onPlayClicked(String trackID) {
         playButton.setOnCheckedChangeListener((compoundButton, isPaused) -> {
             if (!isPaused) {
-                mPlayer.playUri(null, "spotify:track:" + trackID, 0, currentTrackPosMs);
-                currentTrackPosMs = (int) mPlayer.getPlaybackState().positionMs;
+                mPlayer.playUri(null, "spotify:track:" + trackID, 0,
+                        (int) mCurrentPlaybackState.positionMs);
             } else {
                 mPlayer.pause(null);
             }
         });
     }
 
-    private void setPlayer(String trackID) {
+    /**
+     * Sets the mPlayer fields to a SpotifyPlayer object so no we can play track uris using it
+     */
+    private void setPlayer() {
         Config playerConfig = new Config(this, getAccessToken(), CLIENT_ID);
 
-        Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+        mPlayer = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
             @Override
-            public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                mPlayer = spotifyPlayer;
-                mPlayer.addConnectionStateCallback(DJHomeActivity.this);
+            public void onInitialized(SpotifyPlayer player) {
                 mPlayer.addNotificationCallback(DJHomeActivity.this);
-                usePlayButtonToPlaySong(trackID);
+                mPlayer.addConnectionStateCallback(DJHomeActivity.this);
+                mCurrentPlaybackState = mPlayer.getPlaybackState();
             }
 
             @Override
-            public void onError(Throwable throwable) {
+            public void onError(Throwable error) {
             }
         });
     }
@@ -257,6 +260,20 @@ public class DJHomeActivity extends AppCompatActivity implements
 
     @Override
     public void onPlaybackEvent(PlayerEvent playerEvent) {
+        mCurrentPlaybackState = mPlayer.getPlaybackState();
+
+        int progressLoad = (int) (100 * ((double) mCurrentPlaybackState.positionMs) /
+                tracks.get(0).getValue().getDurationMs());
+
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_loader);
+        progressBar.setProgress(progressLoad);
+
+        if (tracks.size() < 5) {
+            mPlayer.isTerminated();
+        }
+        if (!playButton.isChecked() && mCurrentPlaybackState.positionMs == 0) {
+            mPlayer.playUri(null, room.getCurrPlayingTrackID(), 0, 0);
+        }
     }
 
     @Override

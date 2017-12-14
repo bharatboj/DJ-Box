@@ -3,7 +3,6 @@ package edu.illinois.finalproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -102,26 +101,5 @@ public class AudienceHomeActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-    }
-
-    public void onLikeButtonPressed(View view) {
-        DatabaseReference playlistTrackRef = FirebaseDatabase.getInstance()
-                .getReference("Rooms").child(roomID).child("playlist")
-                .child(userID);
-
-        DatabaseReference likedByRef = playlistTrackRef.child("likedBy").child(userID);
-
-        int pos = songsList.getPositionForView(view);
-
-        View itemView = (View) songsList.getItemAtPosition(pos);
-
-        if ()
-            if (isLiked) {
-                likedByRef.setValue(true);
-                playlistTrackRef.child("likesCount").setValue(trackPair.getValue().getLikesCount() + 1);
-            } else {
-                likedByRef.removeValue();
-                playlistTrackRef.child("likesCount").setValue(trackPair.getValue().getLikesCount() - 1);
-            }
     }
 }

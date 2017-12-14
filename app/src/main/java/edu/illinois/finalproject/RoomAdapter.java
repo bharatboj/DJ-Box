@@ -59,6 +59,8 @@ public class RoomAdapter extends ArrayAdapter<Room> {
                     .inflate(R.layout.join_room_list_item, parent, false);
         }
 
+        // initialize all the Views within RoomViewHolder
+        // recycling view to reduce number of internal calls
         RoomViewHolder viewHolder = new RoomViewHolder();
         viewHolder.nameTextView = (TextView) itemView.findViewById(R.id.tv_room_name);
 
@@ -78,6 +80,12 @@ public class RoomAdapter extends ArrayAdapter<Room> {
         viewHolder.nameTextView.setText(room.getName());
     }
 
+    /**
+     * Opens the Audience Home Activity once the user joins the room
+     * @param itemView  View object representing the room information in ListVIew
+     * @param roomID    String representing the room ID
+     * @param room      Room object representing the room that is clicked on
+     */
     private void openAudienceHomeOnClick(final View itemView, final String roomID, final Room room) {
         itemView.setOnClickListener((View view) -> {
             final Context context = view.getContext();
@@ -88,6 +96,7 @@ public class RoomAdapter extends ArrayAdapter<Room> {
             audienceHomeIntent.putExtra("room", room);
             audienceHomeIntent.putExtra("roomID", roomID);
 
+            // opens password if room has a password that is required
             String password = room.getPass();
             if (password != null) {
                 openPasswordDialog(context, audienceHomeIntent, password);
@@ -97,7 +106,16 @@ public class RoomAdapter extends ArrayAdapter<Room> {
         });
     }
 
-    private void openPasswordDialog(Context context, Intent intent, String password) {
+    /**
+     * Opens the Password Dialog if the room requires a password
+     *
+     * @param context       Context object representing the context used to create
+     *                      an intent to go to next activity
+     * @param intent        Intent to go next activity
+     * @param password      Correct password of the room
+     */
+    private void openPasswordDialog(final Context context, final Intent intent,
+                                    final String password) {
         // get prompts.xml view
         LayoutInflater li = LayoutInflater.from(context);
         View promptsView = li.inflate(R.layout.password_join_room, null);

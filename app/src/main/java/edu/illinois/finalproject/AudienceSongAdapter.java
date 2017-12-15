@@ -22,7 +22,6 @@ import java.util.Map;
 public class AudienceSongAdapter extends ArrayAdapter<Map.Entry<String, SimpleTrack>> {
     private String roomID;
     private String userID;
-    static int count;
 
     /**
      * Inner class that represents a Holder of all the necessary

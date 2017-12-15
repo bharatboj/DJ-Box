@@ -12,7 +12,7 @@ class SimpleTrack implements Parcelable, Comparable {
     private String duration;
     private int durationMs;
     private int likesCount;
-    private HashMap<String, String> likedBy;
+    private HashMap<String, Boolean> likedBy;
     private String imageUrl;
 
     SimpleTrack() {
@@ -24,12 +24,12 @@ class SimpleTrack implements Parcelable, Comparable {
         this.duration = in.readString();
         this.durationMs = in.readInt();
         this.likesCount = in.readInt();
-        this.likedBy = (HashMap<String, String>) in.readSerializable();
+        this.likedBy = (HashMap<String, Boolean>) in.readSerializable();
         this.imageUrl = in.readString();
     }
 
     SimpleTrack(String name, String artists, String duration, int durationMs
-            , int likesCount, HashMap<String, String> likedBy, String imageUrl) {
+            , int likesCount, HashMap<String, Boolean> likedBy, String imageUrl) {
         this.name = name;
         this.artists = artists;
         this.duration = duration;
@@ -59,7 +59,7 @@ class SimpleTrack implements Parcelable, Comparable {
         return likesCount;
     }
 
-    public HashMap<String, String> getLikes() {
+    public HashMap<String, Boolean> getLikes() {
         return likedBy;
     }
 

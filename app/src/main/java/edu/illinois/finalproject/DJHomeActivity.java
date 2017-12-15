@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
@@ -169,6 +170,7 @@ public class DJHomeActivity extends AppCompatActivity implements
      *
      * @param view      View object that has actions performed when clicked on
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void onLogOutButtonClicked(final View view) {
         // remove room from Firebase to indicate party has ended once dj logs out
         FirebaseDatabase.getInstance().getReference("Rooms").child(roomID).removeValue();
@@ -189,6 +191,7 @@ public class DJHomeActivity extends AppCompatActivity implements
         Intent intent = new Intent(DJHomeActivity.this, MainSignInActivity.class);
         startActivity(intent);
         finish();
+        CookieManager.getInstance().removeAllCookies(null);
     }
 
     /**
@@ -207,6 +210,7 @@ public class DJHomeActivity extends AppCompatActivity implements
         });
     }
 
+    // This is really the major piece of the code that I used from Spotify to play the uri
     /**
      * Sets the mPlayer fields to a SpotifyPlayer object so no we can play track uris using it
      */
@@ -272,9 +276,10 @@ public class DJHomeActivity extends AppCompatActivity implements
         // there is no clear way using Spotify SDK to see when the tracks end, so for now
         // , until I find a further solution, I have used this temporary solution
         // allows user to use play button to go to next
-        if (Math.abs(tracks.get(0).getValue().getDurationMs() - mCurrentPlaybackState.positionMs) < 500) {
+        if (Math.abs(tracks.get(0).getValue().getDurationMs() - mCurrentPlaybackState.positionMs) < 5000) {
             tracks = room.getUpdatedPlaylist(false);
             mPlayer.playUri(null, room.getCurrPlayingTrackID(), 0, 0);
+            addPlaylistTracksToDatabase();
         }
     }
 
